@@ -168,7 +168,7 @@ class Base(object):
                     ...     'id': {'$in':[123,1234,12345]}
                     ...     }
                     ...
-                    >>> result = Ob.query(condition, limit=1)
+                    >>> result = TestModel.query(condition, limit=1)
 
             order_by:
                     ASC:
@@ -183,7 +183,7 @@ class Base(object):
                     type(str): 'name'
                 return:
                     list of tuples:
-                        >>> r = Ob.query({'name':'test'},distinct='name')
+                        >>> r = TestModel.query({'name':'test'},distinct='name')
                         >>> r
                         >>> [('test', )]
 
