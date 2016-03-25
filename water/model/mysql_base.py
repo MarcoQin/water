@@ -10,8 +10,8 @@ from sqlalchemy import create_engine, or_, desc
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
 from sqlalchemy.orm import sessionmaker, scoped_session
 
-from warter.config import config
-from warter.utils.common_utils import Dict
+from ..config import config
+from ..utils.common_utils import Dict
 
 
 _MYSQL_CONFIG = {
