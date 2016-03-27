@@ -10,20 +10,12 @@ from sqlalchemy import create_engine, or_, desc
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
 from sqlalchemy.orm import sessionmaker, scoped_session
 
-from ..config import config
-from ..utils.common_utils import Dict
+from config import config
+from utils.common_utils import Dict
 
-
-_MYSQL_CONFIG = {
-    'host': config.MYSQL_HOST,
-    'port': config.MYSQL_PORT,
-    'user': config.MYSQL_USER,
-    'password': config.MYSQL_PASSWORD,
-    'database': config.MYSQL_DATABASE
-}
 
 _connection_uri = "mysql://{user}:{password}@{host}:{port}/{database}".format(
-    **_MYSQL_CONFIG)
+    **config.MYSQL_CONFIG)
 
 _engine = create_engine(_connection_uri, encoding='utf-8', pool_recycle=300,  # this value should little than mysql's connect_timeout
                         isolation_level="READ UNCOMMITTED")  # When the SQLAlchemy engine is started with the "READ UNCOMMITED" isolation_level it will perform "dirty reads" which means it will read uncommited changes directly from the database.
