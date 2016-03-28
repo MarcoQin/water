@@ -14,6 +14,7 @@ from tornado.options import define, options
 
 from inits.log_init import init_log
 from config.config import MAX_WAIT_SECONDS_BEFORE_SHUTDOWN
+from utils.log_utils import LogTracker
 
 
 define('port', default=9000, help="run on the given port", type=int)
@@ -52,6 +53,10 @@ class App(tornado.web.Application):
                                 static_path=os.path.join(os.path.dirname(__file__), "static"),)
         #  tornado.web.Application.__init__(self, handlers=handlers, **tornado_settings)
         tornado.web.Application.__init__(self, handlers=[], **tornado_settings)
+
+        # log tracker
+        self.tracker = LogTracker('track')
+        self.sys_logger = LogTracker('root')
 
 
 def main():
