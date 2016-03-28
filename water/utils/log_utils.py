@@ -66,13 +66,13 @@ class LogTracker(object):
 
         if f is not None:
             f = f.f_back.f_back
-        rt = "(unknown file)", 0, "(unknown function)"
+        rv = "(unknown file)", 0, "(unknown function)"
         while hasattr(f, "f_code"):
             co = f.f_code
             filename = os.path.normcase(co.co_filename)
             if filename == _srcfile:
                 f = f.f_back
                 continue
-            rt = co.co_filename, f.f_lineno, co.co_name
+            rv = co.co_filename, f.f_lineno, co.co_name
             break
-        return rt
+        return rv
