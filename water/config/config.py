@@ -21,4 +21,4 @@ logging_config_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__
 LOG_CONFIG = ConfigParser.ConfigParser(None)
 LOG_CONFIG.read(logging_config_file_path)
 
-MAX_WAIT_SECONDS_BEFORE_SHUTDOWN = 5
+MAX_WAIT_SECONDS_BEFORE_SHUTDOWN = 1

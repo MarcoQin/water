@@ -8,10 +8,12 @@ from tornado import gen
 class MainHandler(RequestHandler):
 
     def __init__(self, *request, **kwargs):
-        pass
+        super(MainHandler, self).__init__(*request, **kwargs)
 
     def get(self):
-        pass
+        print self.request.path
+        self.write("hello world")
+        self.finish()
 
     @asynchronous
     @gen.coroutine

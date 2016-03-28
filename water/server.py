@@ -12,6 +12,8 @@ import tornado.web
 from tornado import httpserver
 from tornado.options import define, options
 
+import urls
+
 from inits.log_init import init_log
 from config.config import MAX_WAIT_SECONDS_BEFORE_SHUTDOWN
 from utils.log_utils import LogTracker
@@ -51,8 +53,7 @@ class App(tornado.web.Application):
                                 # static resources config
                                 static_url_prefix='/static/',
                                 static_path=os.path.join(os.path.dirname(__file__), "static"),)
-        #  tornado.web.Application.__init__(self, handlers=handlers, **tornado_settings)
-        tornado.web.Application.__init__(self, handlers=[], **tornado_settings)
+        tornado.web.Application.__init__(self, handlers=urls.handlers, **tornado_settings)
 
         # log tracker
         self.tracker = LogTracker('track')
@@ -73,7 +74,11 @@ def main():
     _http_server_app = App()
     http_server = httpserver.HTTPServer(_http_server_app)
     http_server.listen(port)
+
+    debug = options.debug
+
     logging.info('...Server started on port: %s...'% port)
+    logging.info('...Debug : %s...'% debug)
     logging.info('...Address: http://127.0.0.1:%s ...'% port)
     tornado.ioloop.IOLoop.instance().start()
 
