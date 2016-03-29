@@ -4,27 +4,34 @@
 from tornado.web import RequestHandler, asynchronous
 from tornado import gen
 
+from extension.prepare_ext import FindView
+
 
 class MainHandler(RequestHandler):
 
     def __init__(self, *request, **kwargs):
         super(MainHandler, self).__init__(*request, **kwargs)
+        self.view = None
 
     def prepare(self):
         """
         Called at the beginning of a request before 'get' / 'post'/ etc.
         Here to process prepare extensions(or something like middleware).
         """
-        pass
+        FindView(self)()  # find process view via current visited url path
 
     def on_finish(self):
         """Called after the end of a request.
-        Here to process clean extensions(or some other middleware).
+        Here to process clean up extensions(or some other middleware).
         """
+        pass
 
     def get(self):
-        print self.request.path
-        self.write("hello world")
+        if self.view:
+            res = self.view(self).get()
+            self.write(res)
+            self.finish()
+        self.send_error(404)
         self.finish()
 
     @asynchronous
