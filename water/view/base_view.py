@@ -3,14 +3,15 @@
 
 from tornado import gen
 
+from utils.common_utils import classproperty
 
 class BaseView(object):
 
     def __init__(self, *args, **kwargs):
         pass
 
-    @property
-    def extensions(self):
+    @classproperty
+    def extensions(cls):
         return None
 
     @gen.coroutine

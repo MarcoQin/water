@@ -4,7 +4,7 @@
 from tornado.web import RequestHandler, asynchronous
 from tornado import gen
 
-from extension.prepare_ext import FindView
+from extension.prepare_ext import FindView, EvalHandlerView
 
 
 class MainHandler(RequestHandler):
@@ -19,6 +19,7 @@ class MainHandler(RequestHandler):
         Here to process prepare extensions(or something like middleware).
         """
         FindView(self)()  # find process view via current visited url path
+        EvalHandlerView(self)()  # find current view's extensions and evaluate
 
     def on_finish(self):
         """Called after the end of a request.
