@@ -3,6 +3,7 @@
 
 from base_extension import PrepareExt, FinishExt
 from route.base_route import ALL_ROUTES
+from utils.common_utils import unquote_or_none
 
 
 class FindView(PrepareExt):
@@ -13,8 +14,21 @@ class FindView(PrepareExt):
     def __call__(self):
         path = self.handler.request.path
         for _regex, _view in ALL_ROUTES:
-            if _regex.match(path):
+            match = _regex.match(path)
+            if match:
                 self.handler.view = _view
+                if _regex.groups:
+                    # Pass matched groups to the view processor.  Since
+                    # match.groups() includes both named and
+                    # unnamed groups, we want to use either groups
+                    # or groupdict but not both.
+                    if _regex.groupindex:
+                        self.handler.path_kwargs = dict(
+                            (str(k), unquote_or_none(v))
+                            for (k, v) in match.groupdict().items())
+                    else:
+                        self.handler.path_args = [unquote_or_none(s)
+                                          for s in match.groups()]
                 break
 
 
