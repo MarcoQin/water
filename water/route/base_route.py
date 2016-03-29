@@ -7,6 +7,8 @@ ALL_ROUTES = []
 
 
 def route(url):
+    if not url.endswith('$'):
+        url += '$'
     def _view(cls):
         ALL_ROUTES.append((re.compile(url), cls))
         return cls

@@ -15,5 +15,9 @@ class BaseView(object):
         return None
 
     @gen.coroutine
+    def get(self):
+        return None
+
+    @gen.coroutine
     def post(self):
         return None

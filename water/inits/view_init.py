@@ -6,10 +6,11 @@ import importlib
 
 
 def __find_view(args, dirname, files):
+    module_name_slice = slice(len(args[1]) + 1, -len('.py'))
     for filename in files:
         filepath = os.path.join(dirname, filename)
         if filepath.endswith('.py'):
-            args[0].add(filepath[len(args[1]) + 1: -len('.py')].replace('/', '.').replace('\\', '.'))
+            args[0].add(filepath[module_name_slice].replace('/', '.').replace('\\', '.'))
 
 
 def load_all_views():

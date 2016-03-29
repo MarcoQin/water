@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+from tornado import gen
+
 from utils.common_utils import classproperty
 from view.base_view import BaseView
 from route.base_route import route
@@ -14,11 +16,14 @@ class PrepareParams(PrepareExt):
         print self.handler.request.path
 
 
-@route('/hello')
+@route('/hello(?:/)?(?P<name>.*)')
 class Hello(BaseView):
 
-    def get(self):
-        return "hello world"
+    @gen.coroutine
+    def get(self, name='world'):
+        if not name:
+            name = 'world'
+        return "hello " + name
 
     @classproperty
     def extensions(cls):

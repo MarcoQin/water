@@ -4,6 +4,7 @@
 import json
 from datetime import datetime, date
 
+from tornado import escape
 
 class Dict(dict):
     """
@@ -81,3 +82,15 @@ class JsonEncoder(json.JSONEncoder):
             return obj.strftime("%Y-%m-%d")
         else:
             return json.JSONEncoder.default(self, obj)
+
+
+def unquote_or_none(s):
+    """None-safe wrapper around url_unescape to handle unamteched optional
+    groups correctly.
+
+    Note that args are passed as bytes so the handler can decide what
+    encoding to use.
+    """
+    if s is None:
+        return s
+    return escape.url_unescape(s, encoding=None, plus=False)
