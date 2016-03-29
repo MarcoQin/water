@@ -15,6 +15,7 @@ from tornado.options import define, options
 import urls
 
 from inits.log_init import init_log
+from inits.view_init import load_all_views
 from config.config import MAX_WAIT_SECONDS_BEFORE_SHUTDOWN
 from utils.log_utils import LogTracker
 
@@ -58,6 +59,9 @@ class App(tornado.web.Application):
         # log tracker
         self.tracker = LogTracker('track')
         self.sys_logger = LogTracker('root')
+
+        # load all views
+        load_all_views()
 
 
 def main():
