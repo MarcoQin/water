@@ -7,8 +7,8 @@ from utils.common_utils import classproperty
 
 class BaseView(object):
 
-    def __init__(self, *args, **kwargs):
-        pass
+    def __init__(self, handler, *args, **kwargs):
+        self.handler = handler
 
     @classproperty
     def extensions(cls):

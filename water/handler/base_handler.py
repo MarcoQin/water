@@ -4,7 +4,7 @@
 from tornado.web import RequestHandler, asynchronous
 from tornado import gen
 
-from extension.prepare_ext import FindView, EvalHandlerView
+from extension.prepare_ext import FindView, EvalHandlerViewExt
 from utils.exception_utils import NormalException
 
 
@@ -24,13 +24,13 @@ class MainHandler(RequestHandler):
         Here to process prepare extensions(or something like middleware).
         """
         FindView(self)()  # find process view via current visited url path
-        EvalHandlerView(self)(prepare=True)  # find current view's extensions and evaluate
+        EvalHandlerViewExt(self)(prepare=True)  # find current view's extensions and evaluate
 
     def on_finish(self):
         """Called after the end of a request.
         Here to process clean up extensions(or some other middleware).
         """
-        EvalHandlerView(self)(prepare=False)  # find current view's extensions and evaluate
+        EvalHandlerViewExt(self)(prepare=False)  # find current view's extensions and evaluate
 
     @asynchronous
     @gen.coroutine

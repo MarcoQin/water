@@ -12,6 +12,8 @@ class FindView(PrepareExt):
     """
 
     def __call__(self):
+        if self.handler.view:
+            return
         path = self.handler.request.path
         for _regex, _view in ALL_ROUTES:
             match = _regex.match(path)
@@ -32,7 +34,7 @@ class FindView(PrepareExt):
                 break
 
 
-class EvalHandlerView(PrepareExt):
+class EvalHandlerViewExt(PrepareExt):
     """
     Find out current request handler's custom extensions and eval
     """

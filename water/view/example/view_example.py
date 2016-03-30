@@ -23,7 +23,8 @@ class Hello(BaseView):
     def get(self, name='world'):
         if not name:
             name = 'world'
-        return "hello " + name
+            return "hello " + name
+        return self.handler.redirect("/hello")
 
     @classproperty
     def extensions(cls):
