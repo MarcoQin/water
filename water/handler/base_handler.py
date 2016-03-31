@@ -19,6 +19,12 @@ class MainHandler(RequestHandler):
         self.tracker = self.application.tracker
         self.sys_logger = self.application.sys_logger
 
+        self.status = 404
+        self.error = False
+        self.res = None
+
+        self.arguments = {}
+
     def prepare(self):
         """
         Called at the beginning of a request before 'get' / 'post'/ etc.
@@ -38,7 +44,7 @@ class MainHandler(RequestHandler):
         Process every moments' extensions
 
         @type node: basestring
-        @param node: one of ('prepare', 'finish')
+        @param node: one of ('prepare', 'finish', 'param')
         @return: None or numbers of evaluated extensions.
         """
         if not node:
@@ -48,13 +54,10 @@ class MainHandler(RequestHandler):
     @asynchronous
     @gen.coroutine
     def get(self, *args, **kwargs):
-        status = 404
-        error = False
-        res = None
         if self.view:
             try:
-                # ###----Moment params' handle----####
-                # ###----End Moment params' handle----####
+                # ###----Node: params' handle----####
+                # ###----End Node: params' handle----####
                 template = None
                 kwargs = {}
                 data = yield self.view(self).get(*self.path_args, **self.path_kwargs)
@@ -66,22 +69,22 @@ class MainHandler(RequestHandler):
                         template = data.get_template()
                     else:
                         template = data
-                    res = self.render_string(template, **kwargs)
+                    self.res = self.render_string(template, **kwargs)
             except NormalException as e:
                 template = AutoTemplate('static/error.html').get_template()
-                res = self.render_string(template, message=e.message)
+                self.res = self.render_string(template, message=e.message)
             except Exception:
                 self.tracker.trace_error()
-                error = True
-                status = 500
+                self.error = True
+                self.status = 500
         else:
-            error = True
+            self.error = True
 
-        if error:
-            self.send_error(status)
+        if self.error:
+            self.send_error(self.status)
         else:
-            if res:
-                self.write(res)
+            if self.res:
+                self.write(self.res)
         if not self._finished:
             self.finish()
 
@@ -89,29 +92,29 @@ class MainHandler(RequestHandler):
     @gen.coroutine
     def post(self, *args, **kwargs):
         self.set_header("Content-Type", "application/json")
-        status = 404
-        error = False
-        res = None
         if self.view:
             try:
-                # ###----Moment params' handle----####
-                # ###----End Moment params' handle----####
+                # ###----Node: params' handle----####
+                self._eval_custom_extension('param')
+                # ###----End Node: params' handle----####
                 data = yield self.view(self).post(*self.path_args, **self.path_kwargs)
                 if data:
                     if isinstance(data, (tuple, list)):
                         data = data[0]
-                res = data and data or {}
+                self.res = data and data or {}
             except NormalException:
                 pass
             except Exception:
-                pass
+                self.tracker.trace_error()
+                self.status = 500
+                self.error = True
         else:
-            error = True
+            self.error = True
 
-        if error:
-            self.send_error(status)
+        if self.error:
+            self.send_error(self.status)
         else:
-            if res:
-                self.write(res)
+            if self.res:
+                self.write(self.res)
         if not self._finished:
             self.finish()

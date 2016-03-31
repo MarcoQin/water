@@ -10,9 +10,24 @@
             <h1>
                 hello {{name}}
             </h1>
+            <h3 id="return">
+            </h3>
         </p>
-        <form action="" method="post" accept-charset="utf-8">
-            <p><input type="submit" value="Test post"></p>
-        </form>
+        <a type="button">Test post</a>
     </body>
+    <script src="//cdn.bootcss.com/jquery/2.2.1/jquery.js"></script>
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function(){
+            $('a').click(function(){
+                $.ajax({
+                    method: 'post',
+                    data: JSON.stringify({'haha': 'haha'}),
+                    success: function (res) {
+                        console.log(res);
+                        $("#return").html(JSON.stringify(res));
+                    }
+                })
+            })
+        })
+    </script>
 </html>

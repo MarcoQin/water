@@ -27,3 +27,12 @@ class FinishExt(BaseExtension):
 
     def __call__(self):
         return None
+
+
+class ParamHandleExt(BaseExtension):
+
+    def __init__(self, handler, *args, **kwargs):
+        super(ParamHandleExt, self).__init__(handler, *args, **kwargs)
+
+    def __call__(self):
+        return None

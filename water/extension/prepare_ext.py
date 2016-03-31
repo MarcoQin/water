@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-from base_extension import BaseExtension, PrepareExt, FinishExt
+from base_extension import (BaseExtension,
+                            PrepareExt,
+                            FinishExt,
+                            ParamHandleExt,)
 from route.base_route import ALL_ROUTES
 from utils.common_utils import unquote_or_none
 
@@ -37,6 +40,7 @@ class FindView(PrepareExt):
 nodes = {
     'prepare': PrepareExt,
     'finish': FinishExt,
+    'param': ParamHandleExt,
 }
 
 
