@@ -30,7 +30,7 @@ class FindView(PrepareExt):
                             for (k, v) in match.groupdict().items())
                     else:
                         self.handler.path_args = [unquote_or_none(s)
-                                          for s in match.groups()]
+                                                  for s in match.groups()]
                 break
 
 

@@ -5,6 +5,7 @@ from tornado import gen
 
 from utils.common_utils import classproperty
 
+
 class BaseView(object):
 
     def __init__(self, handler, *args, **kwargs):

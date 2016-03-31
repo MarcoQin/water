@@ -6,6 +6,7 @@ from tornado import gen
 
 from extension.prepare_ext import FindView, EvalHandlerViewExt
 from utils.exception_utils import NormalException
+from utils.template_utils import AutoTemplate
 
 
 class MainHandler(RequestHandler):
@@ -40,11 +41,18 @@ class MainHandler(RequestHandler):
         res = None
         if self.view:
             try:
+                template = None
+                kwargs = {}
                 data = yield self.view(self).get(*self.path_args, **self.path_kwargs)
-                if isinstance(data, (tuple, list)):
-                    pass
-                else:
-                    res = data
+                if data:
+                    if isinstance(data, (tuple, list)):
+                        kwargs = data[1]
+                        data = data[0]
+                    if isinstance(data, AutoTemplate):
+                        template = data.get_template()
+                    else:
+                        template = data
+                    res = self.render_string(template, **kwargs)
             except NormalException as e:
                 print e.message
                 pass
@@ -60,7 +68,8 @@ class MainHandler(RequestHandler):
         else:
             if res:
                 self.write(res)
-        self.finish()
+        if not self._finished:
+            self.finish()
 
     @asynchronous
     @gen.coroutine
