@@ -4,6 +4,7 @@
 from tornado import gen
 
 from utils.common_utils import classproperty
+from utils.template_utils import AutoTemplate
 from view.base_view import BaseView
 from route.base_route import route
 from extension.base_extension import PrepareExt
@@ -17,14 +18,14 @@ class PrepareParams(PrepareExt):
 
 
 @route('/hello(?:/)?(?P<name>.*)')
-class Hello(BaseView):
+class HelloWorld(BaseView):
 
     @gen.coroutine
     def get(self, name='world'):
         if not name:
-            name = 'world'
-            return "hello " + name
-        return self.handler.redirect("/hello")
+            self.handler.redirect("/hello/world")
+            return None
+        return AutoTemplate(self), {'name': name}
 
     @classproperty
     def extensions(cls):
