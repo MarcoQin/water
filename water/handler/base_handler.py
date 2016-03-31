@@ -35,18 +35,31 @@ class MainHandler(RequestHandler):
     @asynchronous
     @gen.coroutine
     def get(self, *args, **kwargs):
+        status = 404
+        error = False
+        res = None
         if self.view:
             try:
                 data = yield self.view(self).get(*self.path_args, **self.path_kwargs)
-                self.write(data)
-                self.finish()
+                if isinstance(data, (tuple, list)):
+                    pass
+                else:
+                    res = data
             except NormalException as e:
                 print e.message
                 pass
-            except Exception as e:
-                print e
+            except Exception:
                 self.tracker.trace_error()
-        self.send_error(404)
+                error = True
+                status = 500
+        else:
+            error = True
+
+        if error:
+            self.send_error(status)
+        else:
+            if res:
+                self.write(res)
         self.finish()
 
     @asynchronous
