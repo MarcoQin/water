@@ -54,8 +54,8 @@ class MainHandler(RequestHandler):
                         template = data
                     res = self.render_string(template, **kwargs)
             except NormalException as e:
-                print e.message
-                pass
+                template = AutoTemplate('static/error.html').get_template()
+                res = self.render_string(template, message=e.message)
             except Exception:
                 self.tracker.trace_error()
                 error = True
@@ -74,4 +74,5 @@ class MainHandler(RequestHandler):
     @asynchronous
     @gen.coroutine
     def post(self, *args, **kwargs):
+        self.set_header("Content-Type", "application/json")
         pass

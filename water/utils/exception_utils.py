@@ -7,6 +7,6 @@ class NormalException(Exception):
     Pass formated errors from views by throw this exception
     """
 
-    def __init__(self, message=None, **kwargs):
+    def __init__(self, message='Some thing happend!', **kwargs):
         self.message = message
         self.ext = kwargs

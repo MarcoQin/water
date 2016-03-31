@@ -8,6 +8,7 @@ from utils.template_utils import AutoTemplate
 from view.base_view import BaseView
 from route.base_route import route
 from extension.base_extension import PrepareExt
+from utils.exception_utils import NormalException
 
 
 class PrepareParams(PrepareExt):
@@ -23,6 +24,7 @@ class HelloWorld(BaseView):
     @gen.coroutine
     def get(self, name='world'):
         if not name:
+            raise NormalException('Please input name on url')
             self.handler.redirect("/hello/world")
             return None
         return AutoTemplate(self), {'name': name}

@@ -13,7 +13,9 @@ class AutoTemplate(object):
         self.template = ''
         if isinstance(template_or_instance, basestring):
             tmp = template_or_instance
-            if not os.path.exists(tmp):
+            if os.path.exists(tmp):
+                tmp = os.path.abspath(tmp)
+            else:
                 tmp = os.path.join(prefix, tmp)
             self.template = tmp
         else:
