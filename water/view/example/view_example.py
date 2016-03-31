@@ -29,6 +29,10 @@ class HelloWorld(BaseView):
             return None
         return AutoTemplate(self), {'name': name}
 
+    @gen.coroutine
+    def post(self, name=""):
+        return {'hello': name and name or 'world'}
+
     @classproperty
     def extensions(cls):
         return PrepareParams

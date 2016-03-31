@@ -75,4 +75,27 @@ class MainHandler(RequestHandler):
     @gen.coroutine
     def post(self, *args, **kwargs):
         self.set_header("Content-Type", "application/json")
-        pass
+        status = 404
+        error = False
+        res = None
+        if self.view:
+            try:
+                data = yield self.view(self).post(*self.path_args, **self.path_kwargs)
+                if data:
+                    if isinstance(data, (tuple, list)):
+                        data = data[0]
+                res = data and data or {}
+            except NormalException:
+                pass
+            except Exception:
+                pass
+        else:
+            error = True
+
+        if error:
+            self.send_error(status)
+        else:
+            if res:
+                self.write(res)
+        if not self._finished:
+            self.finish()

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-from base_extension import PrepareExt, FinishExt
+from base_extension import BaseExtension, PrepareExt, FinishExt
 from route.base_route import ALL_ROUTES
 from utils.common_utils import unquote_or_none
 
@@ -34,18 +34,18 @@ class FindView(PrepareExt):
                 break
 
 
-class EvalHandlerViewExt(PrepareExt):
+class EvalHandlerViewExt(BaseExtension):
     """
     Find out current request handler's custom extensions and eval
     """
 
     def __call__(self, prepare=True):
+        _be_called_exts = []
         if not self.handler.view:
             return
         exts = self.handler.view.extensions
         if exts:
             base = PrepareExt if prepare else FinishExt
-            _be_called_exts = []
             if isinstance(exts, (tuple, list)):
                 for ext in exts:
                     if issubclass(ext, base):
@@ -55,3 +55,4 @@ class EvalHandlerViewExt(PrepareExt):
                     _be_called_exts.append(exts)
             for ext in _be_called_exts:
                 ext(self.handler)()
+        return len(_be_called_exts)
