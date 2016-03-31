@@ -25,13 +25,25 @@ class MainHandler(RequestHandler):
         Here to process prepare extensions(or something like middleware).
         """
         FindView(self)()  # find process view via current visited url path
-        EvalHandlerViewExt(self)(prepare=True)  # find current view's extensions and evaluate
+        self._eval_custom_extension('prepare')
 
     def on_finish(self):
         """Called after the end of a request.
         Here to process clean up extensions(or some other middleware).
         """
-        EvalHandlerViewExt(self)(prepare=False)  # find current view's extensions and evaluate
+        self._eval_custom_extension('finish')
+
+    def _eval_custom_extension(self, node=None):
+        """
+        Process every moments' extensions
+
+        @type node: basestring
+        @param node: one of ('prepare', 'finish')
+        @return: None or numbers of evaluated extensions.
+        """
+        if not node:
+            return
+        return EvalHandlerViewExt(self)(node)  # find current view's extensions and evaluate
 
     @asynchronous
     @gen.coroutine
@@ -41,6 +53,8 @@ class MainHandler(RequestHandler):
         res = None
         if self.view:
             try:
+                # ###----Moment params' handle----####
+                # ###----End Moment params' handle----####
                 template = None
                 kwargs = {}
                 data = yield self.view(self).get(*self.path_args, **self.path_kwargs)
@@ -80,6 +94,8 @@ class MainHandler(RequestHandler):
         res = None
         if self.view:
             try:
+                # ###----Moment params' handle----####
+                # ###----End Moment params' handle----####
                 data = yield self.view(self).post(*self.path_args, **self.path_kwargs)
                 if data:
                     if isinstance(data, (tuple, list)):

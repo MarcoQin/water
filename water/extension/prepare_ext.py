@@ -34,18 +34,26 @@ class FindView(PrepareExt):
                 break
 
 
+nodes = {
+    'prepare': PrepareExt,
+    'finish': FinishExt,
+}
+
+
 class EvalHandlerViewExt(BaseExtension):
     """
     Find out current request handler's custom extensions and eval
     """
 
-    def __call__(self, prepare=True):
+    def __call__(self, node=None):
         _be_called_exts = []
         if not self.handler.view:
             return
         exts = self.handler.view.extensions
-        if exts:
-            base = PrepareExt if prepare else FinishExt
+        if exts and node:
+            base = nodes.get(node)
+            if not base:
+                return
             if isinstance(exts, (tuple, list)):
                 for ext in exts:
                     if issubclass(ext, base):
