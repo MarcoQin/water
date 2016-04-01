@@ -4,6 +4,7 @@
 import os
 import sys
 import logging
+import json
 
 from utils.common_utils import JsonEncoder
 
@@ -26,14 +27,38 @@ class LogTracker(object):
         # info of the caller. solve this by rewrite the findCaller function
         self.logger.findCaller = self._findCaller
 
-    def logging_request_header(self):
-        pass
+    def logging_request_header(self, handler):
+        '''
+        append record request header in log file
+        '''
 
-    def logging_request_body(self):
-        pass
+        try:
+            header_msg = json.dumps(dict(handler.request.headers)).decode('unicode_escape')
+            self.logger.debug(self._pack_msg('RequestHeader', header_msg))
+        except:
+            self.trace_error()
 
-    def logging_response(self):
-        pass
+    def logging_request_body(self, handler):
+        '''
+        record request header in log file
+        '''
+
+        try:
+            body_msg = handler.request.body.decode('unicode_escape').replace('\n', '')
+            self.logger.debug(self._pack_msg('RequestBody', body_msg))
+        except:
+            self.trace_error()
+
+    def logging_response(self, handler):
+        '''
+        record response in log file
+        '''
+
+        try:
+            response_msg = json.dumps(handler.res, cls=JsonEncoder).decode('unicode_escape')
+            self.logger.debug(self._pack_msg('ResponseMsg', response_msg))
+        except:
+            self.trace_error()
 
     def _pack_msg(self, msg_tag, msg_body):
         return "{0}: {1}".format(msg_tag, msg_body)

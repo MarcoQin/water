@@ -10,6 +10,7 @@ class BaseView(object):
 
     def __init__(self, handler, *args, **kwargs):
         self.handler = handler
+        self.arguments = handler.arguments
 
     @classproperty
     def extensions(cls):
