@@ -37,5 +37,11 @@ class TestUtilMethods(unittest.TestCase):
         }
         self.assertEqual(json.dumps(d, cls=util.JsonEncoder), json.dumps(d1))
 
+    def test_camel_convert(self):
+        a = "ThisIsCamelCase"
+        b = "this_is_camel_case"
+        self.assertEqual(util.camel_convert(a), b)
+
+
 if __name__ == "__main__":
     unittest.main()

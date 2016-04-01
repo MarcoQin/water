@@ -20,7 +20,6 @@ class HelloWorld(BaseView):
             raise NormalException('Please input name on url')
             self.handler.redirect("/hello/world")
             return None
-        print self.arguments
         return AutoTemplate(self), {'name': name}
 
     @gen.coroutine

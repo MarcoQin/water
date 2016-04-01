@@ -18,12 +18,12 @@
             <input name='b' />
             <input type='submit'/>
         </form>
-        <a type="button">Test post</a>
+        <button>Test post</button>
     </body>
     <script src="//cdn.bootcss.com/jquery/2.2.1/jquery.js"></script>
     <script type="text/javascript" charset="utf-8">
         $(document).ready(function(){
-            $('a').click(function(){
+            $('button').click(function(){
                 $.ajax({
                     method: 'post',
                     data: JSON.stringify({'haha': 'haha', 'a': 'b'}),
