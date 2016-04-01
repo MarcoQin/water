@@ -1,31 +1,14 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-import json
-
 from tornado import gen
 
 from utils.common_utils import classproperty
 from utils.template_utils import AutoTemplate
 from view.base_view import BaseView
 from route.base_route import route
-from extension.base_extension import ParamHandleExt
 from utils.exception_utils import NormalException
-
-
-class PrepareParams(ParamHandleExt):
-
-    def __call__(self):
-        print "custom Extension"
-        this = self.handler
-        if this.request.method == 'POST':
-            print 'post'
-            if this.request.body:
-                try:
-                    this.arguments = json.loads(this.request.body)
-                except ValueError:
-                    pass
-            print this.arguments
+from extension.common_ext import PrepareParams, RequestLog, ResponseLog
 
 
 @route('/hello(?:/)?(?P<name>.*)')
@@ -37,12 +20,15 @@ class HelloWorld(BaseView):
             raise NormalException('Please input name on url')
             self.handler.redirect("/hello/world")
             return None
+        print self.arguments
         return AutoTemplate(self), {'name': name}
 
     @gen.coroutine
     def post(self, name=""):
-        return {'hello': name and name or 'world'}
+        rv = {'hello': name and name or 'world'}
+        rv.update(self.arguments)
+        return rv
 
     @classproperty
     def extensions(cls):
-        return PrepareParams
+        return PrepareParams, RequestLog, ResponseLog
