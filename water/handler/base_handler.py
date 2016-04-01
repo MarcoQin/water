@@ -5,6 +5,7 @@ from tornado.web import RequestHandler, asynchronous
 from tornado import gen
 
 from extension.prepare_ext import FindView, EvalHandlerViewExt
+from extension.common_ext import PrepareParams
 from utils.exception_utils import NormalException
 from utils.template_utils import AutoTemplate
 
@@ -57,6 +58,8 @@ class MainHandler(RequestHandler):
         if self.view:
             try:
                 # ###----Node: params' handle----####
+                if not self._eval_custom_extension('param'):
+                    PrepareParams(self)()
                 # ###----End Node: params' handle----####
                 template = None
                 kwargs = {}
@@ -95,7 +98,8 @@ class MainHandler(RequestHandler):
         if self.view:
             try:
                 # ###----Node: params' handle----####
-                self._eval_custom_extension('param')
+                if not self._eval_custom_extension('param'):
+                    PrepareParams(self)()
                 # ###----End Node: params' handle----####
                 data = yield self.view(self).post(*self.path_args, **self.path_kwargs)
                 if data:
