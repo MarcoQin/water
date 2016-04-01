@@ -15,6 +15,13 @@ MYSQL_CONFIG = Dict(
     database='test'
 )
 
+REDIS_CONFIG = Dict(
+    host='127.0.0.1',
+    port='6379',
+    password='1234',
+    db=0
+)
+
 LOG_DIR = '/home/marcoqin/server_logs'
 
 logging_config_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logging.cfg')
