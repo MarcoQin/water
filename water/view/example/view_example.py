@@ -9,6 +9,7 @@ from view.base_view import BaseView
 from route.base_route import route, api_route
 from utils.exception_utils import NormalException
 from extension.common_ext import PrepareParams, RequestLog, ResponseLog
+from constant.const_api_id import API_ID
 
 
 @route('/hello(?:/)?(?P<name>.*)')
@@ -33,7 +34,7 @@ class HelloWorld(BaseView):
         return PrepareParams, RequestLog, ResponseLog
 
 
-@api_route(10001)
+@api_route(API_ID.HELLO_WORLD_API)
 class HelloWorldAPI(BaseView):
 
     @gen.coroutine
