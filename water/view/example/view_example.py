@@ -6,7 +6,7 @@ from tornado import gen
 from utils.common_utils import classproperty
 from utils.template_utils import AutoTemplate
 from view.base_view import BaseView
-from route.base_route import route
+from route.base_route import route, api_route
 from utils.exception_utils import NormalException
 from extension.common_ext import PrepareParams, RequestLog, ResponseLog
 
@@ -27,6 +27,18 @@ class HelloWorld(BaseView):
         rv = {'hello': name and name or 'world'}
         rv.update(self.arguments)
         return rv
+
+    @classproperty
+    def extensions(cls):
+        return PrepareParams, RequestLog, ResponseLog
+
+
+@api_route(10001)
+class HelloWorldAPI(BaseView):
+
+    @gen.coroutine
+    def post(self):
+        return {'this': 'is', 'api': 'post'}
 
     @classproperty
     def extensions(cls):

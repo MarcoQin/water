@@ -22,10 +22,12 @@
     </body>
     <script src="//cdn.bootcss.com/jquery/2.2.1/jquery.js"></script>
     <script type="text/javascript" charset="utf-8">
+        var HelloWorldAPI = 10001;
         $(document).ready(function(){
             $('button').click(function(){
                 $.ajax({
                     method: 'post',
+                    headers: {'api_id': HelloWorldAPI},
                     data: JSON.stringify({'haha': 'haha', 'a': 'b'}),
                     success: function (res) {
                         console.log(res);
