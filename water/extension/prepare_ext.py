@@ -5,7 +5,7 @@ from base_extension import (BaseExtension,
                             PrepareExt,
                             FinishExt,
                             ParamHandleExt,)
-from route.base_route import ALL_ROUTES
+from route.base_route import ALL_ROUTES, API_HANDLER_MAP
 from utils.common_utils import unquote_or_none
 
 
@@ -17,6 +17,15 @@ class FindView(PrepareExt):
     def __call__(self):
         if self.handler.view:
             return
+        # when the method is post, find via api_id first
+        if self.handler.request.method == "POST":
+            api_id = self.handler.request.headers.get("Api_id")
+            if api_id and api_id.isdigit():
+                api_id = int(api_id)
+                if api_id in API_HANDLER_MAP:
+                    self.handler.view = API_HANDLER_MAP[api_id]
+                    return
+
         path = self.handler.request.path
         for _regex, _view in ALL_ROUTES:
             match = _regex.match(path)
