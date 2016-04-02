@@ -33,8 +33,9 @@ class LogTracker(object):
         '''
 
         try:
+            method = handler.request.method
             header_msg = json.dumps(dict(handler.request.headers)).decode('unicode_escape')
-            self.logger.debug(self._pack_msg('RequestHeader', header_msg))
+            self.logger.debug(self._pack_msg('{}::RequestHeader'.format(method), header_msg))
         except:
             self.trace_error()
 
@@ -44,8 +45,9 @@ class LogTracker(object):
         '''
 
         try:
+            method = handler.request.method
             body_msg = handler.request.body.decode('unicode_escape').replace('\n', '')
-            self.logger.debug(self._pack_msg('RequestBody', body_msg))
+            self.logger.debug(self._pack_msg('{}::RequestBody'.format(method), body_msg))
         except:
             self.trace_error()
 
@@ -55,8 +57,9 @@ class LogTracker(object):
         '''
 
         try:
+            method = handler.request.method
             response_msg = json.dumps(handler.res, cls=JsonEncoder).decode('unicode_escape')
-            self.logger.debug(self._pack_msg('ResponseMsg', response_msg))
+            self.logger.debug(self._pack_msg('{}::ResponseMsg'.format(method), response_msg))
         except:
             self.trace_error()
 
