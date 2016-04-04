@@ -8,7 +8,7 @@ from extension.prepare_ext import FindView, EvalHandlerViewExt
 from extension.common_ext import PrepareParams
 from utils.exception_utils import NormalException
 from utils.template_utils import AutoTemplate
-
+from constant.const_error import AutoError
 
 class MainHandler(RequestHandler):
 
@@ -106,8 +106,8 @@ class MainHandler(RequestHandler):
                     if isinstance(data, (tuple, list)):
                         data = data[0]
                 self.res = data and data or {}
-            except NormalException:
-                pass
+            except NormalException as e:
+                self.res = AutoError(e.code, e.ext).build_errors()
             except Exception:
                 self.tracker.trace_error()
                 self.status = 500

@@ -10,6 +10,7 @@ from route.base_route import route, api_route
 from utils.exception_utils import NormalException
 from extension.common_ext import PrepareParams, RequestLog, ResponseLog
 from constant.const_api_id import API_ID
+from constant.const_error import BaseError
 
 
 @route('/hello(?:/)?(?P<name>.*)')
@@ -18,7 +19,7 @@ class HelloWorld(BaseView):
     @gen.coroutine
     def get(self, name='world'):
         if not name:
-            raise NormalException('Please input name on url')
+            raise NormalException(BaseError.ERROR_PARAME_ERROR, 'Please input name on url')
             self.handler.redirect("/hello/world")
             return None
         return AutoTemplate(self), {'name': name}
@@ -39,6 +40,7 @@ class HelloWorldAPI(BaseView):
 
     @gen.coroutine
     def post(self):
+        raise NormalException(BaseError.ERROR_PARAME_ERROR, 'Please input name on url', this='api')
         return {'this': 'is', 'api': 'post'}
 
     @classproperty
