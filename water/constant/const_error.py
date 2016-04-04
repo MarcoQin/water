@@ -17,5 +17,12 @@ class BaseError(object):
 
 class AutoError(object):
 
-    def __init__(self, error_id, **kwargs):
-        pass
+    def __init__(self, error_id, ext_data=None):
+        self.errors = Dict()
+        if error_id in BaseError.ERROR_MSG:
+            self.errors['msg'] = BaseError.ERROR_MSG[error_id]
+        if ext_data and isinstance(ext_data, dict):
+            self.errors.update(ext_data)
+
+    def build_errors(self):
+        return Dict(errors=self.errors)
