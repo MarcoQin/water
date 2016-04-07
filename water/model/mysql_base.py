@@ -308,6 +308,8 @@ class Base(object):
         else:
             r = r[:1]
         if not r:
+            if condition:
+                update_data.update(condition)
             r = cls.insert(update_data, is_transaction)
         else:
             if multi:
