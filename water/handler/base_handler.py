@@ -65,7 +65,7 @@ class MainHandler(RequestHandler):
                 kwargs = {}
                 data = yield self.view(self).get(*self.path_args, **self.path_kwargs)
                 if data:
-                    if isinstance(data, (tuple, list)):
+                    if isinstance(data, tuple):
                         kwargs = data[1]
                         data = data[0]
                     if isinstance(data, AutoTemplate):
@@ -103,7 +103,7 @@ class MainHandler(RequestHandler):
                 # ###----End Node: params' handle----####
                 data = yield self.view(self).post(*self.path_args, **self.path_kwargs)
                 if data:
-                    if isinstance(data, (tuple, list)):
+                    if isinstance(data, tuple):
                         data = data[0]
                 self.res = data and data or {}
             except NormalException as e:
