@@ -21,7 +21,6 @@ class HelloWorld(BaseView):
     def get(self, name='world'):
         if not name:
             return Redirect("/hello/world")
-            raise NormalException(BaseError.ERROR_PARAME_ERROR, 'Please input name on url')
         return AutoTemplate(self), {'name': name}
 
     @gen.coroutine
@@ -33,6 +32,14 @@ class HelloWorld(BaseView):
     @classproperty
     def extensions(cls):
         return PrepareParams, RequestLog, ResponseLog
+
+
+@route("(?:/)?")
+class Index(BaseView):
+
+    @gen.coroutine
+    def get(self):
+        raise NormalException(BaseError.ERROR_PARAME_ERROR, 'Please visit <a href="/hello">here</a>')
 
 
 @api_route(API_ID.HELLO_WORLD_API)
