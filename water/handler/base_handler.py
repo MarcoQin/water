@@ -8,7 +8,9 @@ from extension.prepare_ext import FindView, EvalHandlerViewExt
 from extension.common_ext import PrepareParams
 from utils.exception_utils import NormalException
 from utils.template_utils import AutoTemplate
+from utils.web_utils import Redirect
 from constant.const_error import AutoError
+
 
 class MainHandler(RequestHandler):
 
@@ -70,6 +72,9 @@ class MainHandler(RequestHandler):
                         data = data[0]
                     if isinstance(data, AutoTemplate):
                         template = data.get_template()
+                    elif isinstance(data, Redirect):
+                        data.do_redirect(self)
+                        return
                     else:
                         template = data
                     self.res = self.render_string(template, **kwargs)

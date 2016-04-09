@@ -5,6 +5,7 @@ from tornado import gen
 
 from utils.common_utils import classproperty
 from utils.template_utils import AutoTemplate
+from utils.web_utils import Redirect
 from view.base_view import BaseView
 from route.base_route import route, api_route
 from utils.exception_utils import NormalException
@@ -19,9 +20,8 @@ class HelloWorld(BaseView):
     @gen.coroutine
     def get(self, name='world'):
         if not name:
+            return Redirect("/hello/world")
             raise NormalException(BaseError.ERROR_PARAME_ERROR, 'Please input name on url')
-            self.handler.redirect("/hello/world")
-            return None
         return AutoTemplate(self), {'name': name}
 
     @gen.coroutine
