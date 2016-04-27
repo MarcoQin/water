@@ -18,14 +18,19 @@
             <input name='b' />
             <input type='submit'/>
         </form>
-        <button>Test post</button>
+        <button id="test">Test post</button>
+        <button id="list">Test post</button>
+        <button id="create">Test post</button>
     </body>
     <script src="/static/js/jquery.js"></script>
     <script type="text/javascript" charset="utf-8">
         var HelloWorldAPI = 10001;
-        var CalendarAPI = 10002;
+        var CalendarAPI = {
+            list: 10002,
+            create: 10003,
+        };
         $(document).ready(function(){
-            $('button').click(function(){
+            $('#test').click(function(){
                 $.ajax({
                     method: 'post',
                     headers: {'api_id': HelloWorldAPI},
@@ -35,9 +40,25 @@
                         $("#return").html(JSON.stringify(res));
                     }
                 })
+            })
+            $('#list').click(function(){
                 $.ajax({
                     method: 'post',
-                    headers: {'api_id': CalendarAPI},
+                    headers: {'api_id': CalendarAPI.list},
+                    data: {'user_id': 10001, 'type': 'owner'},
+                    success: function (res) {
+                        console.log(res);
+                    }
+                })
+            })
+            $('#create').click(function(){
+                var start = new Date();
+                start = start.getTime()/1000;
+                var end = start + 3600;
+                $.ajax({
+                    method: 'post',
+                    headers: {'api_id': CalendarAPI.create},
+                    data: {'user_id': 10001, start: start, end: end, event: "明天吃早饭"},
                     success: function (res) {
                         console.log(res);
                     }

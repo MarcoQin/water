@@ -4,6 +4,7 @@
 import json
 
 from extension.base_extension import ParamHandleExt, PrepareExt, FinishExt
+from utils.common_utils import Dict
 
 
 class PrepareParams(ParamHandleExt):
@@ -19,11 +20,11 @@ class PrepareParams(ParamHandleExt):
         if this.request.method == 'POST':
             if this.request.body:
                 try:
-                    this.arguments = json.loads(this.request.body)
+                    this.arguments = Dict(json.loads(this.request.body))
                 except ValueError:
-                    this.arguments = self._extract_first_arg(this.request.body_arguments)
+                    this.arguments = Dict(self._extract_first_arg(this.request.body_arguments))
         elif this.request.method == 'GET':
-            this.arguments = self._extract_first_arg(this.request.query_arguments)
+            this.arguments = Dict(self._extract_first_arg(this.request.query_arguments))
 
 
 class RequestLog(PrepareExt):
