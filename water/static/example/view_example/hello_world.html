@@ -21,6 +21,7 @@
         <button id="test">Test post</button>
         <button id="list">Test post</button>
         <button id="create">Test post</button>
+        <div id="list1"></div>
     </body>
     <script src="/static/js/jquery.js"></script>
     <script type="text/javascript" charset="utf-8">
@@ -45,8 +46,9 @@
                 $.ajax({
                     method: 'post',
                     headers: {'api_id': CalendarAPI.list},
-                    data: {'user_id': 10001, 'type': 'owner'},
+                    data: {'user_id': 1},
                     success: function (res) {
+                        $("#list1").html(JSON.stringify(res));
                         console.log(res);
                     }
                 })
