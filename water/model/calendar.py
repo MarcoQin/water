@@ -37,7 +37,7 @@ class Calendar(object):
             "description": "",
             "participant": [],  # list of user_ids
             "location": "",
-            "alert_time": 0,
+            "alert_time": int(time.time()) - 10 * 60,
         }
 
     _db = get_db()
