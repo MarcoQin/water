@@ -27,7 +27,7 @@ Celery = Dict(
     logfile='~/data/celery/%n%I.log'
 )
 
-LOG_DIR = '/home/marcoqin/server_logs'
+LOG_DIR = '~/server_logs'
 
 logging_config_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logging.cfg')
 LOG_CONFIG = ConfigParser.ConfigParser(None)

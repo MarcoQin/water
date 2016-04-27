@@ -23,6 +23,7 @@
     <script src="/static/js/jquery.js"></script>
     <script type="text/javascript" charset="utf-8">
         var HelloWorldAPI = 10001;
+        var CalendarAPI = 10002;
         $(document).ready(function(){
             $('button').click(function(){
                 $.ajax({
@@ -32,6 +33,13 @@
                     success: function (res) {
                         console.log(res);
                         $("#return").html(JSON.stringify(res));
+                    }
+                })
+                $.ajax({
+                    method: 'post',
+                    headers: {'api_id': CalendarAPI},
+                    success: function (res) {
+                        console.log(res);
                     }
                 })
             })
