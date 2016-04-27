@@ -128,8 +128,13 @@ class Calendar(object):
 
     @classmethod
     def extract_spec(cls, data):
-        start = int(time.time()) - 3600 * 24
-        end = start + 24 * 3600 * 30
+        n = datetime.now()
+        n_str = n.strftime("%Y%m01")
+        now = datetime.strptime(n_str, "%Y%m%d")
+        e = "%.4d%.2d%.2d" % (n.year, n.month + 1, 1)
+        e = datetime.strptime(e, "%Y%m%d")
+        start = time.mktime(now.timetuple())
+        end = time.mktime(e.timetuple())
         if 'start' in data and data['start']:
             start = int(data['start'])
         if 'end' in data and data['end']:
