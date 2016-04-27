@@ -2,6 +2,7 @@
 # encoding: utf-8
 
 import time
+from datetime import datetime
 
 from bson import ObjectId
 from mongo_base import get_db
@@ -65,15 +66,78 @@ class Calendar(object):
     @classmethod
     def get(cls, user_ids, **kwargs):
         """
-        start: int, timestamp
-        end: int, timestamp
+        @param kwargs
+            start: int, timestamp
+            end: int, timestamp
         """
-        if isinstance(user_ids, int):
+        spec, start_t, end_t = cls.extract_spec(kwargs)
+        fields = {}
+        multiple = False
+        if isinstance(user_ids, (int, basestring)):
             # single
-            pass
+            spec.update({"user_id": int(user_ids)})
         elif isinstance(user_ids, (list, tuple, set)):
             # multiple
-            pass
+            multiple = True
+            spec.update({"user_id": {'$in': user_ids}})
+            fields = {'_id': 1, 'start': 1, 'end': 1, 'user_id': 1, 'event': 1}
+        res = {}
+        if fields:
+            rt = cls._db.calendar.find(spec, fields)
+        else:
+            rt = cls._db.calendar.find(spec)
+        for ca in rt.sort('start'):
+            print ca
+            start = ca['start']
+            end = ca['end']
+            if start and end:
+                t0 = datetime.fromtimestamp(start).strftime("%Y%m%dT%H")
+                t1 = datetime.fromtimestamp(end).strftime("%Y%m%dT%H")
+                t0y, t0h = t0.split('T')
+                t1y, t1h = t1.split('T')
+                if t0 in res:
+                    if not multiple:
+                        res[t0].append(ca)
+                else:
+                    res[t0] = [ca]
+                tr = int(t1h) - int(t0h)
+                if tr > 1:
+                    for i in range(tr):
+                        tmp_t = start + (i + 1) * 3600
+                        tmp_t = datetime.fromtimestamp(tmp_t).strftime("%Y%m%dT%H")
+                        res[tmp_t] = [ca]
+        res = cls.pack_res(res, start_t, end_t)
+        return res
+
+    @classmethod
+    def pack_res(cls, res, start, end):
+        rt = []
+        fmt = "%Y%m%dT%H"
+        f = lambda x: datetime.fromtimestamp(x).strftime(fmt)
+        t = f(start)
+        start_t = int(time.mktime(datetime.strptime(t, fmt).timetuple()))
+        t = f(end)
+        end_t = int(time.mktime(datetime.strptime(t, fmt).timetuple()))
+        during = (end_t - start_t) / 3600
+        for i in xrange(during):
+            t_f = start_t + i * 3600
+            t_f = f(t_f)
+            rt.append(res.pop(t_f, []))
+        print len(rt)
+        return rt
+
+    @classmethod
+    def extract_spec(cls, data):
+        start = int(time.time()) - 3600 * 24
+        end = start + 24 * 3600 * 30
+        if 'start' in data and data['start']:
+            start = int(data['start'])
+        if 'end' in data and data['end']:
+            end = int(data['end'])
+        return {
+            'start': {'$gte': start},
+            'end': {'$lt': end},
+        }, start, end
 
     @classproperty
     def op_mapping(cls):

@@ -7,7 +7,6 @@ from constant.const_api_id import API_ID
 from route.base_route import api_route
 from view.base_view import BaseView
 
-from model.mongo_base import get_db
 from model.calendar import Calendar
 
 
@@ -16,11 +15,15 @@ class List(BaseView):
 
     @gen.coroutine
     def post(self):
-        col = get_db().calendar
         user_id = int(self.arguments.user_id)
         participant = self.arguments.participant
         participant = [int(x) for x in participant] if participant else []
-        return list(col.find({'user_id': user_id}))
+        u_ids = user_id
+        if participant:
+            u_ids = participant
+            u_ids.append(user_id)
+        return Calendar.get(u_ids)
+        #  return list(col.find({'user_id': user_id}))
         #  return list(col.find({'user_id': user_id}, projection={'_id': 1}))
 
 

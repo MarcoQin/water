@@ -27,9 +27,9 @@ class TestCalendar(unittest.TestCase):
     def test_insert(self):
         headers = {"api_id": API_ID.CALENDAR.INSERT}
         params = {
-            "user_id": 1,
-            "start": int(time.time()),
-            "end": int(time.time()) + 3600,
+            "user_id": 2,
+            "start": int(time.time()) + 3600 * 24 * 9,
+            "end": int(time.time()) + 3600 * 24 * 9 + 3600 * 1,
             "event": "测试数据",
             "description": "",
             "participant": "",
@@ -40,9 +40,10 @@ class TestCalendar(unittest.TestCase):
 
     def test_list(self):
         headers = {"api_id": API_ID.CALENDAR.LIST}
-        params = {'user_id': 1}
+        params = {'user_id': 1, 'participant': []}
         res = requests.post(url, params, headers=headers)
-        pp(res.text)
+        #  pp(res.text)
+        print res.text
 
 
 if __name__ == "__main__":
