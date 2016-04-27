@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+import json
 from tornado.web import RequestHandler, asynchronous
 from tornado import gen
 
@@ -9,6 +10,7 @@ from extension.common_ext import PrepareParams, RequestLog, ResponseLog
 from utils.exception_utils import NormalException
 from utils.template_utils import AutoTemplate
 from utils.web_utils import Redirect
+from utils.common_utils import JsonEncoder
 from constant.const_error import AutoError
 
 
@@ -92,7 +94,7 @@ class MainHandler(RequestHandler):
         if self.error:
             self.send_error(self.status)
         else:
-            if self.res:
+            if self.res is not None:
                 self.write(self.res)
         if not self._finished:
             self.finish()
@@ -124,7 +126,13 @@ class MainHandler(RequestHandler):
         if self.error:
             self.send_error(self.status)
         else:
-            if self.res:
+            if self.res is not None:
+                self.res = self.build_res(self.res)
                 self.write(self.res)
         if not self._finished:
             self.finish()
+
+    def build_res(self, res):
+        if not isinstance(res, basestring):
+            res = json.dumps(res, cls=JsonEncoder)
+        return res

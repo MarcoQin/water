@@ -58,7 +58,10 @@ class LogTracker(object):
 
         try:
             method = handler.request.method
-            response_msg = json.dumps(handler.res, cls=JsonEncoder).decode('unicode_escape')
+            if not isinstance(handler.res, basestring):
+                response_msg = json.dumps(handler.res, cls=JsonEncoder).decode('unicode_escape')
+            else:
+                response_msg = handler.res
             self.logger.debug(self._pack_msg('{}::ResponseMsg'.format(method), response_msg))
         except:
             self.trace_error()

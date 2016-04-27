@@ -22,6 +22,12 @@ REDIS_CONFIG = Dict(
     db=0
 )
 
+
+MONGO_CONFIG = Dict(
+    host="127.0.0.1",
+    port=27017,
+)
+
 Celery = Dict(
     pidfile='~/data/celery/%n.pid',
     logfile='~/data/celery/%n%I.log'
