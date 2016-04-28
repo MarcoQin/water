@@ -23,6 +23,8 @@ class PrepareParams(ParamHandleExt):
                     this.arguments = Dict(json.loads(this.request.body))
                 except ValueError:
                     this.arguments = Dict(self._extract_first_arg(this.request.body_arguments))
+            else:
+                this.arguments = Dict(self._extract_first_arg(this.request.body_arguments))
         elif this.request.method == 'GET':
             this.arguments = Dict(self._extract_first_arg(this.request.query_arguments))
 
