@@ -87,7 +87,6 @@ class Calendar(object):
         else:
             rt = cls._db.calendar.find(spec)
         for ca in rt.sort('start'):
-            print ca
             start = ca['start']
             end = ca['end']
             if start and end:

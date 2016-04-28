@@ -20,6 +20,8 @@
         </form>
         <button id="test">Test</button>
         <button id="list">List</button>
+        <label>额外用户id，用半角都好分格</label>
+        <input id="ids" />
         <button id="lists">额外用户List</button>
         <button id="create">Insert</button>
         <label>开始时间</label>
@@ -63,10 +65,16 @@
                 })
             })
             $('#lists').click(function(){
+                var ids = $("#ids").val();
+                ids = ids.split(",");
+                var n = [];
+                for (var i = 0; i < ids.length; i++) {
+                    n.push(parseInt(ids[i]));
+                }
                 $.ajax({
                     method: 'post',
                     headers: {'api_id': CalendarAPI.list},
-                    data: JSON.stringify({'user_id': 1, 'participant':[2, 3, 4, 5]}),
+                    data: JSON.stringify({'user_id': 1, 'participant':n}),
                     success: function (res) {
                         $("#list1").html(JSON.stringify(res));
                         console.log(res);
