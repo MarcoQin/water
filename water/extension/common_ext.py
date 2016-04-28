@@ -24,7 +24,7 @@ class PrepareParams(ParamHandleExt):
                 except ValueError:
                     this.arguments = Dict(self._extract_first_arg(this.request.body_arguments))
             else:
-                this.arguments = Dict(self._extract_first_arg(this.request.body_arguments))
+                this.arguments = Dict(self._extract_first_arg(this.request.arguments))
         elif this.request.method == 'GET':
             this.arguments = Dict(self._extract_first_arg(this.request.query_arguments))
 
