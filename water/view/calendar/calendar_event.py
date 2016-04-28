@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+import random
 import time
 from tornado import gen
 
@@ -56,11 +57,11 @@ class New(BaseView):
             "location": "北京",
             "alert_time": 0,
         }
-        for i in xrange(50):
+        for i in xrange(500):
             data['start'] = start
             data['end'] = start + 3600
             Calendar.insert(data)
-            start += 3600 * 6
+            start += 3600 * random.randint(1, 10)
         return {}
 
 
