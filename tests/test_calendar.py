@@ -45,9 +45,16 @@ class TestCalendar(unittest.TestCase):
         #  pp(res.text)
         print res.text
 
+    def test_new(self):
+        headers = {"api_id": 10}
+        params = {'user_id': 3, 'start': int(time.time()-3600*13*14)}
+        res = requests.post(url, params, headers=headers)
+        print res
+
 
 if __name__ == "__main__":
     #  unittest.main()
     #  TestCalendar("test_insert").test_insert()
     #  TestCalendar("test_update").test_update()
-    TestCalendar("test_list").test_list()
+    #  TestCalendar("test_list").test_list()
+    TestCalendar("test_new").test_new()

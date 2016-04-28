@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+import time
 from tornado import gen
 
 from constant.const_api_id import API_ID
@@ -34,6 +35,43 @@ class Insert(BaseView):
     def post(self):
         _id = Calendar.insert(self.arguments)
         return {'_id': _id}
+
+
+@api_route(10)
+class New(BaseView):
+
+    @gen.coroutine
+    def post(self):
+        user_id = int(self.arguments.user_id)
+        start = int(float(self.arguments.start))
+        data = {
+            "user_id": user_id,
+            "create_time": int(time.time()),
+            "modify_time": 0,
+            "start": 0,
+            "end": 0,
+            "event": "User: {} Text".format(user_id),
+            "description": "no description",
+            "participant": [],  # list of user_ids
+            "location": "北京",
+            "alert_time": 0,
+        }
+        for i in xrange(50):
+            data['start'] = start
+            data['end'] = start + 3600
+            Calendar.insert(data)
+            start += 3600 * 6
+        return {}
+
+
+@api_route(11)
+class Clear(BaseView):
+
+    @gen.coroutine
+    def post(self):
+        user_id = int(self.arguments.user_id)
+        Calendar._db.calendar.remove({'user_id': user_id})
+        return {}
 
 
 @api_route(API_ID.CALENDAR.UPDATE)
