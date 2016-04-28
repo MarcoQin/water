@@ -3,7 +3,6 @@
 
 import requests
 import unittest
-from datetime import datetime
 import time
 
 
@@ -11,8 +10,9 @@ import _env  # noqa
 from water.utils.common_utils import pretty_print as pp
 from water.constant.const_api_id import API_ID
 
-
 url = "http://localhost:9000/"
+
+
 class TestCalendar(unittest.TestCase):
 
     def test_update(self):

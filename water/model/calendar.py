@@ -92,15 +92,12 @@ class Calendar(object):
             end = ca['end']
             if start and end:
                 t0 = datetime.fromtimestamp(start).strftime("%Y%m%dT%H")
-                t1 = datetime.fromtimestamp(end).strftime("%Y%m%dT%H")
-                t0y, t0h = t0.split('T')
-                t1y, t1h = t1.split('T')
                 if t0 in res:
                     if not multiple:
                         res[t0].append(ca)
                 else:
                     res[t0] = [ca]
-                tr = int(t1h) - int(t0h)
+                tr = (end - start) / 3600
                 if tr > 1:
                     for i in range(tr):
                         tmp_t = start + (i + 1) * 3600
