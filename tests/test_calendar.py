@@ -18,7 +18,7 @@ class TestCalendar(unittest.TestCase):
     def test_update(self):
         headers = {"api_id": API_ID.CALENDAR.UPDATE}
         params = {
-            "_id": "5720c9ee5b8c372ecf8544ae",
+            "_id": "5721f39a421aa90726090971",
             'start': int(time.time())
         }
         res = requests.post(url, params, headers=headers)
@@ -55,6 +55,6 @@ class TestCalendar(unittest.TestCase):
 if __name__ == "__main__":
     #  unittest.main()
     #  TestCalendar("test_insert").test_insert()
-    #  TestCalendar("test_update").test_update()
+    TestCalendar("test_update").test_update()
     #  TestCalendar("test_list").test_list()
-    TestCalendar("test_new").test_new()
+    #  TestCalendar("test_new").test_new()

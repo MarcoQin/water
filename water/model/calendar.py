@@ -61,7 +61,7 @@ class Calendar(object):
             if k in op_mapping:
                 res[k] = op_mapping[k](v)
         res["modify_time"] = time.time()
-        cls._db.calendar.update_one({'_id': _id}, res)
+        cls._db.calendar.update_one({'_id': _id}, {'$set': res})
 
     @classmethod
     def get(cls, user_ids, **kwargs):
