@@ -45,6 +45,20 @@ class New(BaseView):
     def post(self):
         user_id = int(self.arguments.user_id)
         start = int(float(self.arguments.start))
+        l = [
+                "下午去打{}球",
+                "看电影《{}》",
+                "去看《{}》",
+                "和{}约会",
+                "打{}",
+                "揍{}",
+                "和{}玩",
+                "去{}玩",
+                "还没来的及和你一起{}",
+                "和{}去火星",
+                "去行星{}号",
+            ]
+        s = "abcdefghijklmnopqrstuvwxyz123456789"
         data = {
             "user_id": user_id,
             "create_time": int(time.time()),
@@ -60,6 +74,13 @@ class New(BaseView):
         for i in xrange(500):
             data['start'] = start
             data['end'] = start + 3600
+            txt = random.choice(l)
+            tmp = []
+            for i in xrange(random.randint(1, 10)):
+                tmp.append(random.choice(s))
+            txt = txt.format(''.join(tmp))
+            data['event'] = txt
+
             Calendar.insert(data)
             start += 3600 * random.randint(1, 10)
         return {}
