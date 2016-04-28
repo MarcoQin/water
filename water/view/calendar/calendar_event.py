@@ -23,7 +23,7 @@ class List(BaseView):
         if participant:
             u_ids = participant
             u_ids.append(user_id)
-        return Calendar.get(u_ids, self.arguments)
+        return Calendar.get(u_ids, **self.arguments)
         #  return list(col.find({'user_id': user_id}))
         #  return list(col.find({'user_id': user_id}, projection={'_id': 1}))
 
