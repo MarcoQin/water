@@ -42,7 +42,7 @@ class MainHandler(RequestHandler):
         """Called after the end of a request.
         Here to process clean up extensions(or some other middleware).
         """
-        ResponseLog(self)()
+        #  ResponseLog(self)()
         self._eval_custom_extension('finish')
 
     def _eval_custom_extension(self, node=None):
