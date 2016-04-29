@@ -98,7 +98,7 @@ class Calendar(object):
                     res[t0] = [ca]
                 tr = (end - start) / 3600
                 if tr > 1:
-                    for i in range(tr):
+                    for i in range(tr - 1):
                         tmp_t = start + (i + 1) * 3600
                         tmp_t = datetime.fromtimestamp(tmp_t).strftime("%Y%m%dT%H")
                         res[tmp_t] = [ca]
