@@ -12,6 +12,7 @@ from utils.template_utils import AutoTemplate
 from utils.web_utils import Redirect
 from utils.common_utils import JsonEncoder
 from constant.const_error import AutoError
+from model.mysql_base import get_session
 
 
 class MainHandler(RequestHandler):
@@ -44,6 +45,8 @@ class MainHandler(RequestHandler):
         """
         #  ResponseLog(self)()
         self._eval_custom_extension('finish')
+        #  release the mysql connection session
+        get_session().remove()
 
     def _eval_custom_extension(self, node=None):
         """
