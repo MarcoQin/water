@@ -4,7 +4,7 @@ get_help ()
 {
     echo
     echo -e "\033[34m\033[1mUsage: \033[0m"
-    echo -e "\t ./celery.sh \033[32mCommand\033[0m"
+    echo -e "\t ./celery.sh \033[32mCommand [process] [worker count]\033[0m"
     echo
     echo -e "\033[32mCommand:\033[0m"
     echo -e "\t debug: run celery in the current workspace not in the background"
@@ -23,6 +23,8 @@ get_help ()
 }
 
 APP="celery_job.main"
+PROCESS=2
+THREAD=10
 argc=$#
 if [ $argc -eq 0 ]
 then
@@ -41,7 +43,15 @@ else
             echo
             echo -e "\033[40m$1 celery process\033[0m"
             echo
-            cmd="celery multi $1 w1 -l info --app=$APP --pidfile=$pidfile --logfile=$logfile"
+            if [[ $argc -eq 2 || $argc -eq 3 ]]
+            then
+                PROCESS=$2
+            fi
+            if [ $argc -eq 3 ]
+            then
+                THREAD=$3
+            fi
+            cmd="celery multi $1 $PROCESS -l info --concurrency=$THREAD --app=$APP --pidfile=$pidfile --logfile=$logfile"
             echo -e "\033[95m"$cmd"\033[0m"
             eval $cmd
         fi
