@@ -23,8 +23,8 @@ get_help ()
 }
 
 APP="celery_job.main"
-PROCESS=2
-THREAD=10
+PROCESS=1
+THREAD=500
 argc=$#
 if [ $argc -eq 0 ]
 then
@@ -36,7 +36,7 @@ else
     else
         if [ $1 = 'debug' ]
         then
-            celery worker -l info --app=$APP
+            celery worker --concurrency=$THREAD -l info --app=$APP -P gevent
         else
             pidfile=`python get_celery_config.py pidfile`
             logfile=`python get_celery_config.py logfile`
@@ -51,7 +51,7 @@ else
             then
                 THREAD=$3
             fi
-            cmd="celery multi $1 $PROCESS -l info --concurrency=$THREAD --app=$APP --pidfile=$pidfile --logfile=$logfile"
+            cmd="celery multi $1 $PROCESS -l info --concurrency=$THREAD -P gevent --app=$APP --pidfile=$pidfile --logfile=$logfile"
             echo -e "\033[95m"$cmd"\033[0m"
             eval $cmd
         fi

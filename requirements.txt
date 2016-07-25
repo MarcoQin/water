@@ -1,0 +1,14 @@
+tornado
+requests
+mysql-python
+sqlalchemy
+celery
+pymongo
+scrapy
+redis
+dateparser==0.3.5
+js2py
+jieba
+gevent
+numpy
+networkx
