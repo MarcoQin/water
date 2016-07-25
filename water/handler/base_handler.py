@@ -45,7 +45,7 @@ class MainHandler(RequestHandler):
         """
         #  ResponseLog(self)()
         self._eval_custom_extension('finish')
-        #  release the mysql connection session
+        #  release the mysql session
         get_session().remove()
 
     def _eval_custom_extension(self, node=None):
@@ -66,8 +66,8 @@ class MainHandler(RequestHandler):
         if self.view:
             try:
                 # ###----Node: params' handle----####
-                if not self._eval_custom_extension('param'):
-                    PrepareParams(self)()
+                PrepareParams(self)()
+                self._eval_custom_extension('param')
                 # ###----End Node: params' handle----####
                 template = None
                 kwargs = {}
@@ -81,9 +81,14 @@ class MainHandler(RequestHandler):
                     elif isinstance(data, Redirect):
                         data.do_redirect(self)
                         return
-                    else:
+                    elif isinstance(data, basestring):
                         template = data
-                    self.res = self.render_string(template, **kwargs)
+                    else:
+                        template = None
+                    if template is not None:
+                        self.res = self.render_string(template, **kwargs)
+                    else:
+                        self.res = self.build_res(data)
             except NormalException as e:
                 template = AutoTemplate('static/error.html').get_template()
                 self.res = self.render_string(template, message=e.message)
@@ -109,8 +114,8 @@ class MainHandler(RequestHandler):
         if self.view:
             try:
                 # ###----Node: params' handle----####
-                if not self._eval_custom_extension('param'):
-                    PrepareParams(self)()
+                PrepareParams(self)()
+                self._eval_custom_extension('param')
                 # ###----End Node: params' handle----####
                 data = yield self.view(self).post(*self.path_args, **self.path_kwargs)
                 if data:
@@ -118,7 +123,7 @@ class MainHandler(RequestHandler):
                         data = data[0]
                 self.res = data and data or {}
             except NormalException as e:
-                self.res = AutoError(e.code, e.ext).build_errors()
+                self.res = AutoError(e.code, e.message, e.ext).build_errors()
             except Exception:
                 self.tracker.trace_error()
                 self.status = 500

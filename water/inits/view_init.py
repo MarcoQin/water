@@ -18,7 +18,8 @@ def load_all_views():
     loading views
     """
 
-    base_dir = os.getcwd()
+    #  base_dir = os.getcwd()
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.path.pardir))
     views = set()
     os.path.walk(base_dir + '/view', __find_view, (views, base_dir))
     for item in views:
