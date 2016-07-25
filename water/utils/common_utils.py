@@ -3,7 +3,10 @@
 
 import re
 import json
+
+from hashlib import md5
 from datetime import datetime, date
+import time
 
 from tornado import escape
 from bson import ObjectId
@@ -13,6 +16,7 @@ class Dict(dict):
     """
     Object-like dict
     """
+
     def __getattr__(self, key):
         if key in self:
             return self[key]
@@ -20,6 +24,19 @@ class Dict(dict):
 
     def __setattr__(self, key, value):
         self[key] = value
+
+
+def Dictlise(data):
+    if isinstance(data, dict):
+        data = Dict(data)
+        for k, v in data.iteritems():
+            data[k] = Dictlise(v)
+    elif isinstance(data, list):
+        tmp = []
+        for item in data:
+            tmp.append(Dictlise(item))
+        data, tmp = tmp, None
+    return data
 
 
 def to_dict_str_mode(self, time_format=None, keys=None):
@@ -43,7 +60,7 @@ def to_dict(self, keys=None):
     """
     if keys:
         return Dict({name: getattr(self, name)
-                    for name in keys})
+                     for name in keys})
     return self
 
 
@@ -78,6 +95,7 @@ def classproperty(func):
 
 
 class JsonEncoder(json.JSONEncoder):
+
     def default(self, obj):
         if isinstance(obj, datetime):
             return obj.strftime('%Y-%m-%d %H:%M:%S')
@@ -106,6 +124,10 @@ all_cap_re = re.compile('([a-z0-9])([A-Z])')
 
 
 def camel_convert(name):
+    """
+    Input:  "ThisIsCamelCase"
+    Output: "this_is_camel_case"
+    """
     s1 = first_cap_re.sub(r'\1_\2', name)
     return all_cap_re.sub(r'\1_\2', s1).lower()
 
@@ -117,3 +139,40 @@ def pretty_print(res):
         print json.dumps(res, indent=4)
     except Exception:
         print res
+
+
+def remove_unicode_u(res):
+    """
+    Input:   u'\xe9\x9b\xb7\xe6\xb4\x8b\xe6\xa1'
+
+    Output:  '\xe9\x9b\xb7\xe6\xb4\x8b\xe6\xa1'
+    """
+    return ''.join(map(lambda x: "%c" % ord(x), list(res)))
+
+
+def unicode_it(s):
+    if isinstance(s, unicode):
+        return s
+    return s.decode('utf-8')
+
+
+def prepare_link(link):
+    if '?' in link:
+        link = link[:link.index('?')]
+    return link
+
+
+def get_link_md5(link, remove_query=True):
+    if remove_query:
+        link = prepare_link(link)
+    link_md5 = md5(link).hexdigest()
+    return link, link_md5
+
+
+def get_today_start_and_end():
+    now = datetime.now()
+    last_day_begin = datetime(now.year, now.month, now.day -1, now.hour, now.minute, now.second)
+    today_begin = datetime(now.year, now.month, now.day, now.hour, now.minute, now.second)
+    begin_timestamp = int(time.mktime(last_day_begin.timetuple()))
+    end_timestamp = int(time.mktime(today_begin.timetuple()))
+    return begin_timestamp, end_timestamp
