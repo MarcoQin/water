@@ -2,6 +2,7 @@
 # encoding: utf-8
 
 import os
+from tornado import template
 from utils.common_utils import camel_convert
 
 prefix = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -26,3 +27,8 @@ class AutoTemplate(object):
 
     def get_template(self):
         return self.template
+
+    def render_string(self, **kwargs):
+        loader = template.Loader("")
+        t = loader.load(self.get_template())
+        return t.generate(**kwargs)

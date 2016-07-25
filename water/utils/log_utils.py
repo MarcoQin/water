@@ -34,8 +34,9 @@ class LogTracker(object):
 
         try:
             method = handler.request.method
-            header_msg = json.dumps(dict(handler.request.headers)).decode('unicode_escape')
-            self.logger.debug(self._pack_msg('{}::RequestHeader'.format(method), header_msg))
+            #  header_msg = json.dumps(dict(handler.request.headers)).decode('unicode_escape')
+            header_msg = json.dumps(dict(handler.request.headers))
+            self.logger.debug(self._pack_msg('%s::RequestHeader' % method, header_msg))
         except:
             self.trace_error()
 
@@ -46,8 +47,12 @@ class LogTracker(object):
 
         try:
             method = handler.request.method
-            body_msg = handler.request.body.decode('unicode_escape').replace('\n', '')
-            self.logger.debug(self._pack_msg('{}::RequestBody'.format(method), body_msg))
+            if method == "GET":
+                body_msg = ';'.join("%s: %s" % (k, v) for k, v in handler.request.query_arguments.items())
+            else:
+                body_msg = handler.request.body.replace('\n', '')
+            #  body_msg = handler.request.body.decode('unicode_escape').replace('\n', '')
+            self.logger.debug(self._pack_msg('%s::RequestBody' % method, body_msg))
         except:
             self.trace_error()
 
@@ -59,20 +64,21 @@ class LogTracker(object):
         try:
             method = handler.request.method
             if not isinstance(handler.res, basestring):
-                response_msg = json.dumps(handler.res, cls=JsonEncoder).decode('unicode_escape')
+                #  response_msg = json.dumps(handler.res, cls=JsonEncoder).decode('unicode_escape')
+                response_msg = json.dumps(handler.res, cls=JsonEncoder)
             else:
                 response_msg = handler.res
-            self.logger.debug(self._pack_msg('{}::ResponseMsg'.format(method), response_msg))
+            self.logger.debug(self._pack_msg('%s::ResponseMsg' % method, response_msg))
         except:
             self.trace_error()
 
     def _pack_msg(self, msg_tag, msg_body):
-        return "{0}: {1}".format(msg_tag, msg_body)
+        return "%s: %s" % (msg_tag, msg_body)
 
     def trace_error(self):
         etype, evalue, traceback = sys.exc_info()[:3]
-        s = "ErrorStack:\n...Type: {0}\n...Value: {1}"
-        self.logger.exception(s.format(etype, evalue))
+        s = "ErrorStack:\n...Type: %s\n...Value: %s"
+        self.logger.exception(s % (etype, evalue))
 
     def info(self, msg):
         self.logger.info(msg)
