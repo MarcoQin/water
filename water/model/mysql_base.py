@@ -9,12 +9,13 @@ import itertools
 from sqlalchemy import create_engine, or_, desc
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
 from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy import types
 
 from config import config
 from utils.common_utils import Dict
 
 
-_connection_uri = "mysql://{user}:{password}@{host}:{port}/{database}".format(
+_connection_uri = "mysql://{user}:{password}@{host}:{port}/{database}?charset=utf8".format(
     **config.MYSQL_CONFIG)
 
 _engine = create_engine(_connection_uri, encoding='utf-8', pool_recycle=300,  # this value should little than mysql's connect_timeout
@@ -262,7 +263,7 @@ class Base(object):
         return r.count()
 
     @classmethod
-    def update(cls, condition=None, update_data=None, is_transaction=False):
+    def update(cls, condition=None, update_data=None, is_transaction=False, extra_update_options=None):
         """
         update_data:
             type(dict)
@@ -278,7 +279,9 @@ class Base(object):
                 for k1, v1 in v.iteritems():
                     if k1 in op_mapping:
                         update_data[k] = op_mapping[k1](cls, k, v1)
-        r = r.update(update_data)
+        if not extra_update_options:
+            extra_update_options = {}
+        r = r.update(update_data, **extra_update_options)
 
         if not is_transaction:
             cls._session.commit()
@@ -340,7 +343,7 @@ class Base(object):
         s = "<%s(" % self.__tablename__
         for k, v in self.__dict__.iteritems():
             if not k.startswith('_'):
-                s += "{0}={1}, ".format(k, v)
+                s += "%s=%s, " % (k, v)
         s = s[:-2]
         s += ")>"
         return s
@@ -408,3 +411,35 @@ class Raw(object):
         column_names = result.keys()
         return [Dict(itertools.izip(column_names, row))
                 for row in result.fetchall()]
+
+
+class JsonType(types.TypeDecorator):
+    """
+    自定义的Json数据类型,对应mysql中存储的text字段.
+    使用方式如下：
+        class TestModel(Base):
+            extra = Column(JsonType(TestJsonObject))
+    实例化需要传入一个继承util.jsonmodel.JsonBase的自定义json类, 如上述的TestJsonObject
+    使用query_one 或 query拿到的结果, 如result，将包含一个叫extra的字段。
+    更新result的extra时, 可以将extra中需要更新的东西更改之后，再result.extra = result.extra.to_json() & result.save()
+    不过还是推荐使用TestModel.update()的方式。update extra时可以传入TestJsonObject实例、string、dict等。
+    如： TestModel.update({'id': 1}, {'extra': TestJsonObject(None)})
+    """
+
+    impl = types.Text
+
+    def __init__(self, json_model=None):
+        self.json_model = json_model
+        super(JsonType, self).__init__()
+
+    def process_bind_param(self, value, dialect):
+        if value is None:
+            data = json.dumps(self.json_model(None))
+        elif isinstance(value, basestring):
+            data = value
+        else:
+            data = json.dumps(value)
+        return data
+
+    def process_result_value(self, value, dialect):
+        return self.json_model(value)
