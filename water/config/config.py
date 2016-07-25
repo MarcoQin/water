@@ -40,3 +40,10 @@ LOG_CONFIG = ConfigParser.ConfigParser(None)
 LOG_CONFIG.read(logging_config_file_path)
 
 MAX_WAIT_SECONDS_BEFORE_SHUTDOWN = 1
+
+SMTP_CONFIG = Dict(
+    HOST='somehost.somedomain.com',
+    USER='someuser@somedomain.com',
+    PASSWORD='password',
+    FROM='service@somedomain.com'
+)
