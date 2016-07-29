@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+import weakref
 import json
 
+from weakref import WeakKeyDictionary
 from json import JSONEncoder
 
 
@@ -13,7 +15,58 @@ _default.default = JSONEncoder().default  # Save unmodified default.
 JSONEncoder.default = _default  # replacement
 
 
-class JsonFieldMeta(type):
+class _Base(object):
+    pass
+
+
+class JsonFieldBase(object):
+    pass
+
+
+class JsonField(JsonFieldBase):
+
+    def __init__(self, field_type, default=None):
+        self.field_type = field_type
+        self.type_is_Base = issubclass(field_type, _Base)
+        self.default = default
+        self.data = WeakKeyDictionary()
+
+    def _set_value(self, instance, value):
+        if self.type_is_Base:
+            if instance in self.data:
+                if isinstance(value, dict):
+                    for k, v in value.iteritems():
+                        self.data[instance].__setattr__(k, v)
+                elif value is None:
+                    self.data[instance] = self.field_type(None, outer=instance)
+            else:
+                self.data[instance] = self.field_type(value, outer=instance)
+        else:
+            if value is None:
+                value = self._get_default()
+            self.data[instance] = value
+
+    def _get_value(self, instance):
+        if instance in self.data:
+            return self.data[instance]
+        else:
+            data = self._get_default()
+            self._set_value(instance, data)
+            return data
+
+    def _get_default(self):
+        data = self.default
+        if callable(self.default):
+            data = self.default()
+            if not isinstance(data, self.field_type):
+                if self.field_type == basestring:
+                    data = str(data)
+                else:
+                    data = self.field_type(data)
+        return data
+
+
+class JsonMeta(type):
     def __new__(cls, name, bases, attrs):
         newattrs = {}
         _obj = {}
@@ -29,163 +82,73 @@ class JsonFieldMeta(type):
             if name == '_obj':
                 return _obj
             if name in _obj:
-                return _obj[name]._get_value()
+                tmp = _obj[name]
+                if isinstance(tmp, _Base):
+                    return tmp
+                return tmp._get_value(self.outer())
             return object.__getattribute__(self, name)
         newattrs['__getattribute__'] = __getattribute__
 
         def __setattr__(self, name, value):
             if name in _obj:
-                return _obj[name]._set_value(value)
-        newattrs['__setattr__'] = __setattr__
-
-        return super(JsonFieldMeta, cls).__new__(cls, name, bases, newattrs)
-
-
-class JsonFieldBase(object):
-
-    def _set_value(self, value):
-        pass
-
-    def _get_value(self):
-        pass
-
-    def to_json(self):
-        pass
-
-
-class JsonField(JsonFieldBase):
-
-    def __init__(self, field_type, default=None):
-        self.field_type = field_type
-        self.default = default
-        self.data = None
-
-    def _set_value(self, value):
-        if value is None or isinstance(value, self.field_type) or issubclass(value.__class__, self.field_type):
-            self.data = value
-        else:
-            raise ValueError("filed_type not equal: %s" % value)
-
-    def _get_value(self):
-        if self.data is not None:
-            return self.data
-        else:
-            if callable(self.default):
-                data = self.default()
-                if not isinstance(data, self.field_type):
-                    if self.field_type == basestring:
-                        data = str(data)
-                    else:
-                        data = self.field_type(data)
-                return data
-            return self.default
-
-    def to_json(self):
-        return self._get_value()
-
-
-class JsonObjectField(JsonFieldBase):
-    __metaclass__ = JsonFieldMeta
-
-    def _set_value(self, value):
-        if isinstance(value, dict):
-            for k, v in value.iteritems():
-                if k in self._obj:
-                    field = self._obj[k]
-                    if isinstance(field, JsonFieldBase):
-                        field._set_value(v)
-        if value is None:
-            for k in self._obj.iterkeys():
-                self._obj[k]._set_value(None)
-
-    def _get_value(self):
-        return self
-        data = {}
-        for k, v in self._obj.iteritems():
-            if isinstance(v, JsonField):
-                data[k] = v._get_value()
-        return data
-
-    def to_json(self):
-        data = {}
-        for k, v in self._obj.iteritems():
-            if isinstance(v, JsonFieldBase):
-                data[k] = v._get_value()
-        return data
-
-    def __repr__(self):
-        return str(self.to_json())
-
-
-class JsonMeta(type):
-    def __new__(cls, name, bases, attrs):
-        newattrs = {}
-        __obj = {}
-
-        for k, v in attrs.iteritems():
-            if isinstance(v, JsonFieldBase):
-                __obj[k] = v
+                _obj[name]._set_value(self.outer(), value)
             else:
-                newattrs[k] = v
-        newattrs['__obj'] = __obj
-
-        def __getattribute__(self, name):
-            if name == '__obj':
-                return __obj
-            if name in __obj:
-                return __obj[name]._get_value()
-            return object.__getattribute__(self, name)
-        newattrs['__getattribute__'] = __getattribute__
-
-        def __setattr__(self, name, value):
-            if name in __obj:
-                return __obj[name]._set_value(value)
+                object.__setattr__(self, name, value)
         newattrs['__setattr__'] = __setattr__
 
-        def _hook(**data):
-            for k, v in data.iteritems():
-                if k in __obj:
-                    __obj[k]._set_value(v)
-            if not data:
-                # init
-                for k, v in __obj.iteritems():
-                    __obj[k]._set_value(None)
-            return __obj
+        def set_empty(self):
+            for k, v in self._obj.iteritems():
+                v._set_value(self.outer(), None)
 
-        def __init__(self, jsonstr):
+        def _hook(self, **data):
+            set_empty(self)
+            for k, v in data.iteritems():
+                self.__setattr__(k, v)
+            return _obj
+
+        def __init__(self, jsonstr, outer=None):
+            if not outer:
+                self.outer = weakref.ref(self)
+            else:
+                self.outer = weakref.ref(outer)
+
             if not jsonstr:
                 data = {}
             else:
                 data = json.loads(jsonstr)
-            _hook(**data)
+            _hook(self, **data)
         newattrs['__init__'] = __init__
 
         def to_json(self):
             data = {}
-            for k, v in __obj.iteritems():
-                data[k] = v._get_value()
+            for k, v in _obj.iteritems():
+                tmp = v._get_value(self.outer())
+                if isinstance(tmp, _Base):
+                    data[k] = tmp.to_json()
+                else:
+                    data[k] = tmp
             return data
         newattrs['to_json'] = to_json
 
         return super(JsonMeta, cls).__new__(cls, name, bases, newattrs)
 
 
-class JsonBase(object):
+class JsonBase(_Base):
     """
     Json Model的基类
     构建自己的json model类时继承此类，并创建class级的字段。如下:
     ```
-        class CustomObject(JsonObjectField):
+        class CustomObject(JsonBase):
             b = JsonField(int)
 
-        class NestObject(JsonObjectField):
-            a = CustomObject()
+        class NestObject(JsonBase):
+            a = JsonField(CustomObject)
 
         class TestJsonObject(JsonBase):
             name = JsonField(basestring, default='')
             sample = JsonField(int, default=0)
             time = JsonField(int, default=time.time)
-            data = NestObject()
+            data = JsonField(NestObject)
     ```
     上面的TestJsonObject即最终需要的类.
     实例化此类时，需要给init函数传入一个json string或者None

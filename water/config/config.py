@@ -29,11 +29,11 @@ MONGO_CONFIG = Dict(
 )
 
 Celery = Dict(
-    pidfile='~/data/celery/%n.pid',
-    logfile='~/data/celery/%n%I.log'
+    pidfile='/home/data/celery/%n.pid',
+    logfile='/home/data/celery/%n%I.log'
 )
 
-LOG_DIR = '~/server_logs'
+LOG_DIR = '/home/server_logs'
 
 logging_config_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logging.cfg')
 LOG_CONFIG = ConfigParser.ConfigParser(None)
