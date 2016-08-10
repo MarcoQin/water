@@ -3,7 +3,7 @@
 
 from pymongo import MongoClient
 
-from config import config
+from water.config import config
 
 __connection_uri = "mongodb://{host}:{port}/".format(**config.MONGO_CONFIG)
 

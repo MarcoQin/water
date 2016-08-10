@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-from base_extension import (BaseExtension,
-                            PrepareExt,
-                            FinishExt,
-                            ParamHandleExt,)
-from route.base_route import ALL_ROUTES, API_HANDLER_MAP
-from utils.common_utils import unquote_or_none
+from water.extension.base_extension import (BaseExtension,
+                                            PrepareExt,
+                                            FinishExt,
+                                            ParamHandleExt,)
+from water.route.base_route import ALL_ROUTES, API_HANDLER_MAP
+from water.utils.common_utils import unquote_or_none
 
 
 class FindView(PrepareExt):

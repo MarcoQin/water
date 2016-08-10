@@ -3,7 +3,7 @@
 
 from tornado import gen
 
-from utils.common_utils import classproperty
+from water.utils.common_utils import classproperty
 
 
 class BaseView(object):

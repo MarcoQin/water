@@ -5,6 +5,7 @@ import os
 import time
 import logging
 import signal
+import _env  # noqa
 
 import tornado.ioloop
 import tornado.web
@@ -12,12 +13,12 @@ import tornado.web
 from tornado import httpserver
 from tornado.options import define, options
 
-import urls
+import water.urls as urls
 
-from inits.log_init import init_log
-from inits.view_init import load_all_views
-from config.config import MAX_WAIT_SECONDS_BEFORE_SHUTDOWN
-from utils.log_utils import LogTracker
+from water.inits.log_init import init_log
+from water.inits.view_init import load_all_views
+from water.config.config import MAX_WAIT_SECONDS_BEFORE_SHUTDOWN
+from water.utils.log_utils import LogTracker
 
 
 define('port', default=9000, help="run on the given port", type=int)

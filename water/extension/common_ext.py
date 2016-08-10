@@ -3,8 +3,8 @@
 
 import json
 
-from extension.base_extension import ParamHandleExt, PrepareExt, FinishExt
-from utils.common_utils import Dict
+from water.extension.base_extension import ParamHandleExt, PrepareExt, FinishExt
+from water.utils.common_utils import Dict
 
 
 class PrepareParams(ParamHandleExt):

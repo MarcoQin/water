@@ -6,7 +6,7 @@ import sys
 import logging
 import json
 
-from utils.common_utils import JsonEncoder
+from water.utils.common_utils import JsonEncoder
 
 
 if hasattr(sys, 'frozen'):

@@ -8,8 +8,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from contextlib import closing
 
-from config.config import SMTP_CONFIG
-from utils.common_utils import classproperty
+from water.config.config import SMTP_CONFIG
+from water.utils.common_utils import classproperty
 
 
 class SMTPUtils(object):

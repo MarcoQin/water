@@ -2,13 +2,13 @@
 # encoding: utf-8
 
 from gevent import monkey
-monkey.patch_all()
+monkey.patch_all()  # noqa
 
 from celery import Celery
 from celery import current_app
 from celery.signals import after_task_publish
 
-from config.config import REDIS_CONFIG
+from water.config.config import REDIS_CONFIG
 
 redis_url = 'redis://{host}:{port}/{db}'.format(**REDIS_CONFIG)
 
@@ -17,7 +17,7 @@ app = Celery(
     'celery_job',
     broker=redis_url,
     backend=redis_url,
-    include=['celery_job.tasks']
+    include=['water.celery_job.tasks']
 )
 
 app.conf.update(

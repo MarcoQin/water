@@ -5,7 +5,7 @@ import os
 import logging
 from logging import config as logging_config
 
-from config.config import LOG_CONFIG, LOG_DIR
+from water.config.config import LOG_CONFIG, LOG_DIR
 
 
 def __fileConfig(config, disable_existing_loggers=True):

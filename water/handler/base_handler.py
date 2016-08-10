@@ -5,14 +5,14 @@ import json
 from tornado.web import RequestHandler, asynchronous
 from tornado import gen
 
-from extension.prepare_ext import FindView, EvalHandlerViewExt
-from extension.common_ext import PrepareParams, RequestLog, ResponseLog
-from utils.exception_utils import NormalException
-from utils.template_utils import AutoTemplate
-from utils.web_utils import Redirect
-from utils.common_utils import JsonEncoder
-from constant.const_error import AutoError
-from model.mysql_base import get_session
+from water.extension.prepare_ext import FindView, EvalHandlerViewExt
+from water.extension.common_ext import PrepareParams, RequestLog
+from water.utils.exception_utils import NormalException
+from water.utils.template_utils import AutoTemplate
+from water.utils.web_utils import Redirect
+from water.utils.common_utils import JsonEncoder
+from water.constant.const_error import AutoError
+from water.model.mysql_base import get_session
 
 
 class MainHandler(RequestHandler):

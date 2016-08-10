@@ -3,7 +3,8 @@
 
 import os
 from tornado import template
-from utils.common_utils import camel_convert
+
+from water.utils.common_utils import camel_convert
 
 prefix = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 

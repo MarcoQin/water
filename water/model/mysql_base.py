@@ -11,8 +11,8 @@ from sqlalchemy.ext.declarative import as_declarative, declared_attr
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import types
 
-from config import config
-from utils.common_utils import Dict
+from water.config import config
+from water.utils.common_utils import Dict
 
 
 _connection_uri = "mysql://{user}:{password}@{host}:{port}/{database}?charset=utf8".format(

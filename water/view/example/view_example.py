@@ -3,13 +3,13 @@
 
 from tornado import gen
 
-from utils.template_utils import AutoTemplate
-from utils.web_utils import Redirect
-from view.base_view import BaseView
-from route.base_route import route, api_route
-from utils.exception_utils import NormalException
-from constant.const_api_id import API_ID
-from constant.const_error import BaseError
+from water.utils.template_utils import AutoTemplate
+from water.utils.web_utils import Redirect
+from water.view.base_view import BaseView
+from water.route.base_route import route, api_route
+from water.utils.exception_utils import NormalException
+from water.constant.const_api_id import API_ID
+from water.constant.const_error import BaseError
 
 
 @route('/hello(?:/)?(?P<name>.*)')

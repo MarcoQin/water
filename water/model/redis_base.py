@@ -3,7 +3,7 @@
 
 import redis
 
-from config import config
+from water.config import config
 
 __pool = redis.ConnectionPool(**config.REDIS_CONFIG)
 _db = redis.Redis(connection_pool=__pool)

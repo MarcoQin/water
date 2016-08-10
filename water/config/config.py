@@ -4,7 +4,7 @@
 import os
 import ConfigParser
 
-from utils.common_utils import Dict
+from water.utils.common_utils import Dict
 
 
 MYSQL_CONFIG = Dict(
@@ -29,11 +29,14 @@ MONGO_CONFIG = Dict(
 )
 
 Celery = Dict(
-    pidfile='/home/data/celery/%n.pid',
-    logfile='/home/data/celery/%n%I.log'
+    #  pidfile='/home/data/celery/%n.pid',
+    #  logfile='/home/data/celery/%n%I.log'
+    pidfile='/Users/qinyuan/data/celery/%n.pid',
+    logfile='/Users/qinyuan/data/celery/%n%I.log'
 )
 
-LOG_DIR = '/home/server_logs'
+#  LOG_DIR = '/home/server_logs'
+LOG_DIR = '/Users/qinyuan/data/server_logs'
 
 logging_config_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logging.cfg')
 LOG_CONFIG = ConfigParser.ConfigParser(None)

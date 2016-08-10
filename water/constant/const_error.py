@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-from utils.common_utils import Dict
+from water.utils.common_utils import Dict
 
 
 class BaseError(object):
