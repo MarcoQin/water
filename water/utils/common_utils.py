@@ -167,12 +167,3 @@ def get_link_md5(link, remove_query=True):
         link = prepare_link(link)
     link_md5 = md5(link).hexdigest()
     return link, link_md5
-
-
-def get_today_start_and_end():
-    now = datetime.now()
-    last_day_begin = datetime(now.year, now.month, now.day -1, now.hour, now.minute, now.second)
-    today_begin = datetime(now.year, now.month, now.day, now.hour, now.minute, now.second)
-    begin_timestamp = int(time.mktime(last_day_begin.timetuple()))
-    end_timestamp = int(time.mktime(today_begin.timetuple()))
-    return begin_timestamp, end_timestamp
