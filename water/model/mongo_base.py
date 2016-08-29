@@ -9,8 +9,8 @@ __connection_uri = "mongodb://{host}:{port}/".format(**config.MONGO_CONFIG)
 
 __client = MongoClient(__connection_uri)
 
-_raven_db = __client.raven
+_db = __client.some_collection
 
 
 def get_db():
-    return _raven_db
+    return _db
