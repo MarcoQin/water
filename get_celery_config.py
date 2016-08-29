@@ -12,7 +12,7 @@ Default = dict(
 USE_DEFAULT = False
 
 try:
-    from config.config import Celery
+    from water.config.config import Celery
 except ImportError:
     USE_DEFAULT = True
     Celery = Default
