@@ -25,6 +25,8 @@ _session_factory = sessionmaker(bind=_engine)
 
 _Session = scoped_session(_session_factory)
 
+_Session.execute("SET NAMES 'utf8mb4' COLLATE 'utf8mb4_general_ci'")  # handle utf8mb4 charset error
+
 
 def get_session():
     """
