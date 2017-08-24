@@ -32,7 +32,6 @@ def get_session():
     """
     If you need more complex query like join or select,
     just use this function and through session to get them.  """
-    _Session.rollback()
     return _Session
 
 
@@ -135,7 +134,6 @@ class Base(object):
         return cls.__name__
 
     _session = get_session()
-    _session()
 
     @classmethod
     def get(cls, pk):

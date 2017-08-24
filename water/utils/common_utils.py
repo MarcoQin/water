@@ -3,10 +3,10 @@
 
 import re
 import json
+import copy
 
 from hashlib import md5
 from datetime import datetime, date
-import time
 
 from tornado import escape
 from bson import ObjectId
@@ -24,6 +24,18 @@ class Dict(dict):
 
     def __setattr__(self, key, value):
         self[key] = value
+
+    def __copy__(self):
+        return Dict(dict(self))
+
+    def __deepcopy__(self, memo):
+        return Dict(copy.deepcopy(dict(self)))
+
+    def copy(self):
+        return Dict(dict(self))
+
+    def deepcopy(self):
+        return Dict(copy.deepcopy(dict(self)))
 
 
 def Dictlise(data):
