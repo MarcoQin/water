@@ -89,9 +89,12 @@ def parse_operator(cls, op_dict):
         if not isinstance(v, dict):
             binary_expressions.append(getattr(cls, k) == v)
         else:
-            for k1, v1 in v.iteritems():
-                if k1 in op_mapping:
-                    binary_expressions.append(op_mapping[k1](cls, k, v1))
+            if k == '$or':
+                binary_expressions.append(or_(*parse_operator(cls, v)))
+            else:
+                for k1, v1 in v.iteritems():
+                    if k1 in op_mapping:
+                        binary_expressions.append(op_mapping[k1](cls, k, v1))
     return binary_expressions
 
 
