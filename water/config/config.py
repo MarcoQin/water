@@ -2,7 +2,7 @@
 # encoding: utf-8
 
 import os
-import ConfigParser
+import configparser
 
 from water.utils.common_utils import Dict
 
@@ -33,10 +33,10 @@ Celery = Dict(
     logfile='/home/data/celery/%n%I.log'
 )
 
-LOG_DIR = '/home/server_logs'
+LOG_DIR = './server_logs'
 
 logging_config_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logging.cfg')
-LOG_CONFIG = ConfigParser.ConfigParser(None)
+LOG_CONFIG = configparser.ConfigParser()
 LOG_CONFIG.read(logging_config_file_path)
 
 MAX_WAIT_SECONDS_BEFORE_SHUTDOWN = 1

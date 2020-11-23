@@ -10,6 +10,7 @@ from sqlalchemy import create_engine, or_, desc
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import types
+from sqlalchemy import Column, Integer
 
 from water.config import config
 from water.utils.common_utils import Dict
@@ -19,7 +20,7 @@ _connection_uri = "mysql://{user}:{password}@{host}:{port}/{database}?charset=ut
     **config.MYSQL_CONFIG)
 
 _engine = create_engine(_connection_uri, encoding='utf-8', pool_recycle=300,  # this value should little than mysql's connect_timeout
-                        isolation_level="READ UNCOMMITTED")  # When the SQLAlchemy engine is started with the "READ UNCOMMITED" isolation_level it will perform "dirty reads" which means it will read uncommited changes directly from the database.
+                        isolation_level="READ UNCOMMITTED", echo=False)  # When the SQLAlchemy engine is started with the "READ UNCOMMITED" isolation_level it will perform "dirty reads" which means it will read uncommited changes directly from the database.
 
 _session_factory = sessionmaker(bind=_engine)
 
@@ -85,14 +86,14 @@ op_mapping = {
 
 def parse_operator(cls, op_dict):
     binary_expressions = []
-    for k, v in op_dict.iteritems():
+    for k, v in op_dict.items():
         if not isinstance(v, dict):
             binary_expressions.append(getattr(cls, k) == v)
         else:
             if k == '$or':
                 binary_expressions.append(or_(*parse_operator(cls, v)))
             else:
-                for k1, v1 in v.iteritems():
+                for k1, v1 in v.items():
                     if k1 in op_mapping:
                         binary_expressions.append(op_mapping[k1](cls, k, v1))
     return binary_expressions
@@ -111,7 +112,7 @@ row2dict = lambda r: Dict({c.name: getattr(r, c.name)
 
 def row2dict_parse(info):
     info = row2dict(info)
-    for k, v in info.iteritems():
+    for k, v in info.items():
         if v is None:
             info[k] = ''
         elif isinstance(v, datetime.datetime):
@@ -121,7 +122,7 @@ def row2dict_parse(info):
 
 def row2dict_timestamp_mode(info):
     info = row2dict(info)
-    for k, v in info.iteritems():
+    for k, v in info.items():
         if v is None:
             info[k] = ''
         elif isinstance(v, datetime.datetime):
@@ -135,6 +136,8 @@ class Base(object):
     @declared_attr
     def __tablename__(cls):
         return cls.__name__
+
+    id = Column(Integer, primary_key=True)
 
     _session = get_session()
 
@@ -279,7 +282,7 @@ class Base(object):
         r = cls.query(condition, skip_slice=True)
         for k, v in update_data.items():
             if isinstance(v, dict):
-                for k1, v1 in v.iteritems():
+                for k1, v1 in v.items():
                     if k1 in op_mapping:
                         update_data[k] = op_mapping[k1](cls, k, v1)
         if not extra_update_options:
@@ -292,7 +295,7 @@ class Base(object):
 
     @classmethod
     def _merge(cls, old, new, is_transaction=False):
-        for k, v in new.iteritems():
+        for k, v in new.items():
             setattr(old, k, v)
 
         if not is_transaction:
@@ -314,6 +317,9 @@ class Base(object):
         else:
             r = r[:1]
         if not r:
+            if condition and 'id' in condition:
+                if not condition['id']:
+                    condition.pop('id')
             if condition:
                 update_data.update(condition)
             r = cls.insert(update_data, is_transaction)
@@ -344,7 +350,7 @@ class Base(object):
 
     def __repr__(self):
         s = "<%s(" % self.__tablename__
-        for k, v in self.__dict__.iteritems():
+        for k, v in self.__dict__.items():
             if not k.startswith('_'):
                 s += "%s=%s, " % (k, v)
         s = s[:-2]
@@ -366,7 +372,7 @@ class Base(object):
 
     def to_dict_str_mode(self, time_format=None, keys=None):
         info = self.to_dict(keys=keys)
-        for k, v in info.iteritems():
+        for k, v in info.items():
             if v is None:
                 info[k] = ''
             elif isinstance(v, datetime.datetime):
@@ -412,7 +418,7 @@ class Raw(object):
         """
         result = cls._execute(sql, params)
         column_names = result.keys()
-        return [Dict(itertools.izip(column_names, row))
+        return [Dict(zip(column_names, row))
                 for row in result.fetchall()]
 
 
@@ -438,7 +444,7 @@ class JsonType(types.TypeDecorator):
     def process_bind_param(self, value, dialect):
         if value is None:
             data = json.dumps(self.json_model(None))
-        elif isinstance(value, basestring):
+        elif isinstance(value, (str, bytes)):
             data = value
         else:
             data = json.dumps(value)

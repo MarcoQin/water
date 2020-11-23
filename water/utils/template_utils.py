@@ -13,7 +13,7 @@ class AutoTemplate(object):
 
     def __init__(self, template_or_instance):
         self.template = ''
-        if isinstance(template_or_instance, basestring):
+        if isinstance(template_or_instance, (str, bytes)):
             tmp = template_or_instance
             if os.path.exists(tmp):
                 tmp = os.path.abspath(tmp)

@@ -25,7 +25,7 @@ class LogTracker(object):
         self.logger = logging.getLogger(logger)
         # because of this wrapper of logger, logging info will not find the right
         # info of the caller. solve this by rewrite the findCaller function
-        self.logger.findCaller = self._findCaller
+        # self.logger.findCaller = self._findCaller
 
     def logging_request_header(self, handler):
         '''
@@ -47,12 +47,19 @@ class LogTracker(object):
 
         try:
             method = handler.request.method
+            header_msg = json.dumps(dict(handler.request.headers))
             if method == "GET":
                 body_msg = ';'.join("%s: %s" % (k, v) for k, v in handler.request.query_arguments.items())
             else:
-                body_msg = handler.request.body.replace('\n', '')
+                body = handler.request.body
+                if isinstance(body, bytes):
+                    try:
+                        body = body.decode()
+                    except Exception:
+                        body = 'cannot decode body'
+                body_msg = body.replace('\n', '').replace('\r', '')
             #  body_msg = handler.request.body.decode('unicode_escape').replace('\n', '')
-            self.logger.debug(self._pack_msg('%s::RequestBody' % method, body_msg))
+            self.logger.debug(self._pack_msg('%s::RequestHeader:%s \nRequestBody' % (method, header_msg), body_msg))
         except:
             self.trace_error()
 
@@ -63,9 +70,9 @@ class LogTracker(object):
 
         try:
             method = handler.request.method
-            if not isinstance(handler.res, basestring):
+            if not isinstance(handler.res, (str, bytes)):
                 #  response_msg = json.dumps(handler.res, cls=JsonEncoder).decode('unicode_escape')
-                response_msg = json.dumps(handler.res, cls=JsonEncoder)
+                response_msg = json.dumps(handler.res, cls=JsonEncoder, ensure_ascii=False)
             else:
                 response_msg = handler.res
             self.logger.debug(self._pack_msg('%s::ResponseMsg' % method, response_msg))
@@ -95,7 +102,7 @@ class LogTracker(object):
     def exception(self, e):
         self.logger.exception(e)
 
-    def _findCaller(self):
+    def _findCaller(self, stack_info=False):
         '''
         Get caller info, to record (file, func, lineno)
         '''

@@ -9,7 +9,7 @@ from hashlib import md5
 from datetime import datetime, date
 
 from tornado import escape
-from bson import ObjectId
+# from bson import ObjectId
 
 
 class Dict(dict):
@@ -41,7 +41,7 @@ class Dict(dict):
 def Dictlise(data):
     if isinstance(data, dict):
         data = Dict(data)
-        for k, v in data.iteritems():
+        for k, v in data.items():
             data[k] = Dictlise(v)
     elif isinstance(data, list):
         tmp = []
@@ -53,7 +53,7 @@ def Dictlise(data):
 
 def to_dict_str_mode(self, time_format=None, keys=None):
     info = self.to_dict(keys=keys)
-    for k, v in info.iteritems():
+    for k, v in info.items():
         if k in ('to_dict', 'to_dict_str_mode'):
             continue
         if v is None:
@@ -113,8 +113,8 @@ class JsonEncoder(json.JSONEncoder):
             return obj.strftime('%Y-%m-%d %H:%M:%S')
         elif isinstance(obj, date):
             return obj.strftime("%Y-%m-%d")
-        elif isinstance(obj, ObjectId):
-            return str(obj)
+        # elif isinstance(obj, ObjectId):
+            # return str(obj)
         else:
             return json.JSONEncoder.default(self, obj)
 
@@ -146,11 +146,11 @@ def camel_convert(name):
 
 def pretty_print(res):
     try:
-        if isinstance(res, basestring):
+        if isinstance(res, str):
             res = json.loads(res)
-        print json.dumps(res, indent=4)
+        print(json.dumps(res, indent=4))
     except Exception:
-        print res
+        print(res)
 
 
 def remove_unicode_u(res):

@@ -43,7 +43,9 @@ def close_server():
 # handle signal
 def server_shutdown_handler(sig, frame):
     logging.warning('...Caught signal: %s', sig)
-    tornado.ioloop.IOLoop.instance().add_callback(close_server)
+    io_loop = tornado.ioloop.IOLoop.instance()
+    io_loop.stop()
+    # tornado.ioloop.IOLoop.instance().add_callback(close_server)
 
 
 class App(tornado.web.Application):
@@ -73,8 +75,8 @@ def main():
     init_log(port)
 
     # added signal callback to interrupt app
-    signal.signal(signal.SIGINT, server_shutdown_handler)
-    signal.signal(signal.SIGTERM, server_shutdown_handler)
+    # signal.signal(signal.SIGINT, server_shutdown_handler)
+    # signal.signal(signal.SIGTERM, server_shutdown_handler)
 
     _http_server_app = App()
     http_server = httpserver.HTTPServer(_http_server_app)

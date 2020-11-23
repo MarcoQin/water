@@ -2,7 +2,7 @@
 # encoding: utf-8
 
 import requests
-from urlparse import urlparse
+# from urlparse import urlparse
 from gevent import Timeout
 
 
@@ -17,9 +17,9 @@ class Redirect(object):
 
 class WebUtils(object):
 
-    @classmethod
-    def get_domain(cls, url):
-        return urlparse(url).netloc
+    # @classmethod
+    # def get_domain(cls, url):
+        # return urlparse(url).netloc
 
     @classmethod
     def get_redirect_location(cls, url):

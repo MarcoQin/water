@@ -26,3 +26,7 @@ class BaseView(object):
     @gen.coroutine
     def post(self):
         return None
+
+    @gen.coroutine
+    def options(self):
+        return None

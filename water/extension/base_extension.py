@@ -36,3 +36,21 @@ class ParamHandleExt(BaseExtension):
 
     def __call__(self):
         return None
+
+
+class PostParamHandleExt(BaseExtension):
+
+    def __init__(self, handler, *args, **kwargs):
+        super(PostParamHandleExt, self).__init__(handler, *args, **kwargs)
+
+    def __call__(self):
+        return None
+
+
+class ResHandleExt(BaseExtension):
+
+    def __init__(self, handler, *args, **kwargs):
+        super(ResHandleExt, self).__init__(handler, *args, **kwargs)
+
+    def __call__(self):
+        return None

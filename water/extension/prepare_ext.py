@@ -4,7 +4,9 @@
 from water.extension.base_extension import (BaseExtension,
                                             PrepareExt,
                                             FinishExt,
-                                            ParamHandleExt,)
+                                            ParamHandleExt,
+                                            PostParamHandleExt,
+                                            ResHandleExt,)
 from water.route.base_route import ALL_ROUTES, API_HANDLER_MAP
 from water.utils.common_utils import unquote_or_none
 
@@ -18,13 +20,13 @@ class FindView(PrepareExt):
         if self.handler.view:
             return
         # when the method is post, find via api_id first
-        if self.handler.request.method == "POST":
-            api_id = self.handler.request.headers.get("Api_id")
-            if api_id and api_id.isdigit():
-                api_id = int(api_id)
-                if api_id in API_HANDLER_MAP:
-                    self.handler.view = API_HANDLER_MAP[api_id]
-                    return
+        # if self.handler.request.method == "POST":
+        api_id = self.handler.request.headers.get("Api_id")
+        if api_id and api_id.isdigit():
+            api_id = int(api_id)
+            if api_id in API_HANDLER_MAP:
+                self.handler.view = API_HANDLER_MAP[api_id]
+                return
 
         path = self.handler.request.path
         for _regex, _view in ALL_ROUTES:
@@ -50,6 +52,8 @@ nodes = {
     'prepare': PrepareExt,
     'finish': FinishExt,
     'param': ParamHandleExt,
+    'post_param': PostParamHandleExt,
+    'res':  ResHandleExt,
 }
 
 
